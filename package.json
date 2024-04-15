@@ -1,7 +1,6 @@
 {
   "name": "gas-template",
   "module": "index.ts",
-  "type": "module",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/google-apps-script": "^1.0.83",
@@ -10,5 +9,6 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  }
+  },
+  "type": "module"
 }
