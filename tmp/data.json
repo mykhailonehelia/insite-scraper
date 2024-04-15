@@ -1,0 +1,59 @@
+{
+  "company": {
+    "name": "Magic Service",
+    "phone": "(303) 916-8323",
+    "email": "info@magicserviceco.com",
+    "address": {
+      "street": "18078 E Ida Dr.",
+      "city": "Centennial",
+      "state": "CO",
+      "zip": "80015"
+    }
+  },
+  "images": {
+    "logo": "logo.png"
+  },
+  "style": {
+    "colors": {
+      "primary": "#67c83d",
+      "accent": "#0088cb",
+      "dark": "#484545"
+    }
+  },
+  "content": {
+    "heroSection": {
+      "tagline": "We clean your house like magic!",
+      "description": "testHeroDescription"
+    },
+    "serviceListSection": {
+      "title": "",
+      "services": [
+        {
+          "name": "",
+          "description": "",
+          "faIcon": ""
+        }
+      ]
+    },
+    "ctaSection": {
+      "text": ""
+    },
+    "reviewSection": {
+      "title": "",
+      "reviews": [
+        {
+          "name": "",
+          "review": "",
+          "picture": ""
+        }
+      ]
+    }
+  },
+  "fixmeTodo": [
+    "style.fonts",
+    "company.hoursOfOperation",
+    "company.socialLinks",
+    "serviceAreas?",
+    "mapLink"
+  ]
+}
