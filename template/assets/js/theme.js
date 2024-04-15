@@ -492,7 +492,7 @@
     ],
   });
 
-  let primaryColor = "#67c83d";
+  let primaryColor = "{{ style.colors.primary }}";
 
   var witr_cp = $(".witr_circle_id1");
   witr_cp.circleProgress({

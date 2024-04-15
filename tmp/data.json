@@ -1,59 +1,50 @@
 {
-  "company": {
-    "name": "Magic Service",
-    "phone": "(303) 916-8323",
-    "email": "info@magicserviceco.com",
-    "address": {
-      "street": "18078 E Ida Dr.",
-      "city": "Centennial",
-      "state": "CO",
-      "zip": "80015"
+  "Company Info": {
+    "__type": "K",
+    "data": {
+      "Name": "Magic Service",
+      "Phone": "(303) 916-8323",
+      "Email": "info@magicserviceco.com",
+      "Street Address": "18078 E Ida Dr.",
+      "City": "Centennial",
+      "State": "CO",
+      "Zip": 80015
     }
   },
-  "images": {
-    "logo": "logo.png"
-  },
-  "style": {
-    "colors": {
-      "primary": "#67c83d",
-      "accent": "#0088cb",
-      "dark": "#484545"
+  "Style": {
+    "__type": "K",
+    "data": {
+      "Primary Color": "#0000ff",
+      "Accent Color": "#0088cb",
+      "Dark Color": "#484545"
     }
   },
-  "content": {
-    "heroSection": {
-      "tagline": "We clean your house like magic!",
-      "description": "testHeroDescription"
-    },
-    "serviceListSection": {
-      "title": "",
-      "services": [
-        {
-          "name": "",
-          "description": "",
-          "faIcon": ""
-        }
-      ]
-    },
-    "ctaSection": {
-      "text": ""
-    },
-    "reviewSection": {
-      "title": "",
-      "reviews": [
-        {
-          "name": "",
-          "review": "",
-          "picture": ""
-        }
-      ]
+  "Content": {
+    "__type": "K",
+    "data": {
+      "Hero Tagline": "A Tagline goes here",
+      "Hero Description": "What about a description",
+      "Service List Title": "Here are some services:"
     }
   },
-  "fixmeTodo": [
-    "style.fonts",
-    "company.hoursOfOperation",
-    "company.socialLinks",
-    "serviceAreas?",
-    "mapLink"
-  ]
+  "Services": {
+    "__type": "T",
+    "data": [
+      {
+        "Service": "Cleaning",
+        "Description": "Makes things clean",
+        "Font Awesome Icon": "Yeah"
+      }
+    ]
+  },
+  "Reviews": {
+    "__type": "T",
+    "data": [
+      {
+        "Name": "John Doe",
+        "Review": "I really like this cleaning service.",
+        "Photo URL": ""
+      }
+    ]
+  }
 }
