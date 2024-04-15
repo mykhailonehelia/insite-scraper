@@ -1,8 +1,10 @@
+/*
 :root {
     --primary-color: {{ style.colors.primary }};
     --secondary-color: {{ style.colors.secondary }};
     --dark-color: {{ style.colors.dark}};
 }
+*/
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
 /* === style_w10 theme default ==== */

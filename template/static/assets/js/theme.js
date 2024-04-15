@@ -492,7 +492,10 @@
     ],
   });
 
-  let primaryColor = "{{ style.colors.primary }}";
+  if (window.primaryColor === undefined) {
+    throw new Error("primaryColor is not defined");
+  }
+  const primaryColor = window.primaryColor;
 
   var witr_cp = $(".witr_circle_id1");
   witr_cp.circleProgress({
