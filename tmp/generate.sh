@@ -6,7 +6,7 @@ fi
 
 JSON_FILE=$1
 TEMPLATE_DIR="template"
-OUTPUT_DIR="temp/$(basename "$JSON_FILE" .json)"
+OUTPUT_DIR="build/$(basename "$JSON_FILE" .json)"
 
 mkdir -p "$OUTPUT_DIR"
 cp -r "$TEMPLATE_DIR/"* "$OUTPUT_DIR/"
