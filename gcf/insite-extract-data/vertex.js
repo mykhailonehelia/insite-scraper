@@ -1,5 +1,5 @@
-import functions from "@google-cloud/functions-framework";
 import {
+  GenerativeModel,
   HarmBlockThreshold,
   HarmCategory,
   VertexAI,
@@ -24,18 +24,25 @@ const safetySettings = [
   },
 ];
 
-functions.http("vertex", async (req, res) => {
-  const project = "default-gas-project";
-  const location = "us-central1";
-  const model = "gemini-1.0-pro";
+/**
+ * @param {string} project
+ * @param {string} location
+ * @param {string} model
+ */
+function getGemini(project, location, model = "gemini-1.0-pro") {
   const vertex = new VertexAI({ project, location });
-
   const gemini = vertex.getGenerativeModel({ model, safetySettings });
+  return gemini;
+}
 
-  const query = req.query.q;
-  if (typeof query !== "string") {
-    throw new Error("please specify a query");
-  }
-  const result = await gemini.generateContent(query);
-  res.status(200).send(result.response);
-});
+/**
+ * @param {GenerativeModel} gemini
+ * @param {string} prompt
+ * @returns {Promise<string>}
+ */
+async function prompt(gemini, prompt) {
+  const result = await gemini.generateContent(prompt);
+  return parseGeminiResponse(result.response);
+}
+
+export { getGemini, prompt };
