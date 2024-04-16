@@ -11,6 +11,7 @@
   "dependencies": {
     "@google-cloud/functions-framework": "^3.3.0",
     "@google-cloud/storage": "^7.10.0",
+    "@google-cloud/vertexai": "^1.1.0",
     "googleapis": "^134.0.0"
   }
 }
