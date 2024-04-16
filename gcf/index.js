@@ -25,7 +25,7 @@ functions.http("helloHttp", async (req, res) => {
   /** @type {string} */
   let folderName;
   const bucket = storage.bucket(bucketName);
-  const localTemplateFolderPath = "../template/dynamic"; // Replace with the actual path to the local templates
+  const localTemplateFolderPath = "./template"; // Replace with the actual path to the local templates
   let folderExists = true;
   do {
     folderName = nanoid();
