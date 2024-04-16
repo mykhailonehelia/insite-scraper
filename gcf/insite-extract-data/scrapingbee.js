@@ -4,7 +4,7 @@ import { ScrapingBeeClient } from "scrapingbee";
 /**
  * @param {string} url
  * @param {GcsCache} cache
- * @returns {Promise<string>}
+ * @returns {Promise<string|null>}
  */
 async function getHtml(url, cache) {
   const apiKey = process.env.SCRAPINGBEE_API_KEY;
@@ -20,21 +20,26 @@ async function getHtml(url, cache) {
     response = JSON.parse(cachedResponse);
   } else {
     const client = new ScrapingBeeClient(apiKey);
-    const result = await client.get({
-      url: url,
-      params: {
-        screenshot: true,
-        screenshot_full_page: true,
-        wait_browser: "load",
-        block_resources: false,
-        json_response: true,
-      },
-    });
-    const td = new TextDecoder();
-    response = JSON.parse(td.decode(result.data));
+    try {
+      const result = await client.get({
+        url: url,
+        params: {
+          screenshot: true,
+          screenshot_full_page: true,
+          wait_browser: "load",
+          block_resources: false,
+          json_response: true,
+        },
+      });
+      const td = new TextDecoder();
+      response = JSON.parse(td.decode(result.data));
+    } catch (err) {
+      console.error(err);
+      response = null;
+    }
     await cache.set(cacheKey, JSON.stringify(response));
   }
-  return response.body;
+  return response ? response.body : null;
 }
 
 export { getHtml };

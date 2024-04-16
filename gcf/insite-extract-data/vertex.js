@@ -63,4 +63,27 @@ function parseGeminiResponse(response) {
   return txt;
 }
 
-export { getGemini, prompt };
+/**
+ * @param {string} response
+ */
+function extractJson(response) {
+  console.log(`extract json input\n\n${response}\n\n`);
+  const jsonLines = [];
+  let inCodeBlock = false;
+  const codeBlockDelimiterRegexp = /^```/;
+  for (const line of response.split("\n")) {
+    if (inCodeBlock && codeBlockDelimiterRegexp.test(line)) {
+      break;
+    }
+    if (inCodeBlock) {
+      jsonLines.push(line);
+    }
+    if (!inCodeBlock && codeBlockDelimiterRegexp.test(line)) {
+      inCodeBlock = true;
+    }
+  }
+  console.log(`extract json output\n\n${jsonLines.join("\n")}\n\n`);
+  return JSON.parse(jsonLines.join("\n"));
+}
+
+export { getGemini, prompt, extractJson };

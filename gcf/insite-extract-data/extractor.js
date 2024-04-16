@@ -1,10 +1,62 @@
+import { GenerativeModel } from "@google-cloud/vertexai";
 import { JSDOM } from "jsdom";
+import { extractJson, prompt } from "./vertex.js";
+
+/**
+ * @param {string} url
+ * @param {string} html
+ * @param {GenerativeModel} gemini
+ */
+async function extractData(url, html, gemini) {
+  const rawData = extractRawData(url, html);
+
+  const logo = await getLogoImageUrl(rawData.images, gemini);
+
+  return { logo };
+}
+
+/**
+ * @param {Image[]} images
+ * @param {GenerativeModel} gemini
+ * @returns {Promise<string|null>}
+ */
+async function getLogoImageUrl(images, gemini) {
+  const p = `
+  Here are a list of images pulled from a website:
+  """
+  ${JSON.stringify(images)}
+  """
+
+  Please return a single JSON object corresponding to the logo image in a code block, or null if none of them are the logo.
+  `;
+
+  const resp = await prompt(gemini, p);
+  let src = null;
+  try {
+    src = extractJson(resp).src;
+    if (src === undefined) src = null;
+  } catch (err) {
+    console.error(`error parsing JSON from gemini: ${err}.`);
+    src = null;
+  }
+  return src;
+}
+
+/**
+ * @typedef {object} Image
+ * @property {string} src
+ * @property {string} alt
+ * @property {string} width
+ * @property {string} height
+ * @property {string} className
+ * @property {string} id
+ */
 
 /**
  * @param {string} url
  * @param {string} html
  */
-function extractData(url, html) {
+function extractRawData(url, html) {
   const { document } = new JSDOM(html).window;
 
   /**
@@ -23,16 +75,16 @@ function extractData(url, html) {
     // @ts-ignore
     const { src, alt, width, height, className, id } = img;
     if (width === 0 || height === 0) return [];
-    return [
-      {
-        src: resolveUrl(url, src),
-        alt,
-        width,
-        height,
-        className,
-        id,
-      },
-    ];
+    /** @type {Image} */
+    const result = {
+      src: resolveUrl(url, src),
+      alt,
+      width,
+      height,
+      className,
+      id,
+    };
+    return [result];
   });
 
   /**
