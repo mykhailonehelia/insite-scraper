@@ -16,7 +16,7 @@ functions.http("helloHttp", async (req, res) => {
   let data;
   try {
     data = JSON.parse(req.body);
-  } catch (error) {
+  } catch {
     res.status(400).send("Bad Request: Invalid JSON");
     return;
   }
@@ -25,18 +25,33 @@ functions.http("helloHttp", async (req, res) => {
   const bucketName = "your-bucket-name";
   let folderName;
   const bucket = storage.bucket(bucketName);
+  const localTemplateFolderPath = 'path/to/local/templates'; // Replace with the actual path to the local templates
   let folderExists = true;
   do {
     folderName = nanoid();
-    const [files] = await bucket.getFiles({ prefix: folderName });
+    try {
+      const [files] = await bucket.getFiles({ prefix: folderName });
+      folderExists = files.length > 0;
+    } catch (error) {
+      if (error.code === 404) {
+        folderExists = false;
+      } else {
+        throw error;
+      }
+    }
     folderExists = files.length > 0;
   } while (folderExists);
+
+  const localFiles = await fsPromises.readdir(localTemplateFolderPath);
 
   const [files] = await bucket.getFiles({ prefix: folderName });
 
   await Promise.all(
-    files.map(async (file) => {
-      const [content] = await file.download();
+    localFiles.map(async (fileName) => {
+      const content = await fsPromises.readFile(`${localTemplateFolderPath}/${fileName}`, 'utf8');
+      const template = handlebars.compile(content);
+      const templatedContent = template(data);
+      const newFileName = `${folderName}/${fileName}`;
       const template = handlebars.compile(content.toString());
       const templatedContent = template(data);
       const newFileName = `${folderName}/${file.name}`;
