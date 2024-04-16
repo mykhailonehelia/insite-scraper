@@ -27,6 +27,7 @@ async function extractData(url, html, cache, gemini) {
         Name: companyInfo.businessName,
         Phone: companyInfo.phoneNumber,
         Email: companyInfo.emailAddress,
+        Tagline: companyInfo.tagline,
         "Street Address": companyInfo.address.street,
         City: companyInfo.address.city,
         State: companyInfo.address.state,
@@ -47,7 +48,14 @@ async function extractData(url, html, cache, gemini) {
         "Logo Image URL": logo,
       },
     },
-    companyInfo,
+    Services: {
+      __type: "T",
+    },
+    Other: {
+      services: companyInfo.services,
+      socialMediaLinks: companyInfo.socialMedia,
+      mapsLink: companyInfo.mapsLink,
+    },
   };
 }
 
