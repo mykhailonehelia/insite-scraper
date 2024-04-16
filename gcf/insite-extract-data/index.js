@@ -1,10 +1,11 @@
 import functions from "@google-cloud/functions-framework";
 import { Storage } from "@google-cloud/storage";
 import { GcsCache } from "./cache.js";
-import { runPageSpeed } from "./pagespeed.js";
+// import { runPageSpeed } from "./pagespeed.js";
 import { getHtml } from "./scrapingbee.js";
-import { html2md } from "./html2md.js";
-import { getGemini, prompt } from "./vertex.js";
+// import { html2md } from "./html2md.js";
+// import { getGemini, prompt } from "./vertex.js";
+import { extractData } from "./extractor.js";
 
 functions.http("entry", async (req, res) => {
   /** @type {string} */
@@ -18,26 +19,9 @@ functions.http("entry", async (req, res) => {
 
   //const psRes = await runPageSpeed(url, cache);
   const rawHtml = await getHtml(url, cache);
-  const md = html2md(rawHtml);
+  //const md = html2md(rawHtml);
 
-  const gemini = getGemini("default-gas-project", "us-central1");
+  const result = extractData(url, rawHtml);
 
-  const p = `
-  The following is markdown from a webpage:
-  
-  """
-  ${md}
-  """
-
-  Please extract the following details as a JSON object.
-
-  Example:
-  {
-    "business_name": ...,
-  }
-  `;
-
-  const result = await prompt(gemini, p);
-
-  res.status(200).send("<pre>" + result + "</pre>");
+  res.status(200).send("<pre>" + JSON.stringify(result, null, 2) + "</pre>");
 });
