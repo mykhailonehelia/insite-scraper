@@ -1,6 +1,6 @@
 import functions from "@google-cloud/functions-framework";
 import { Storage } from "@google-cloud/storage";
-import mustache from "mustache";
+import { promises as fsPromises } from "fs";
 import { Readable } from "stream";
 import handlebars from "handlebars";
 import { customAlphabet } from "nanoid";
@@ -33,7 +33,6 @@ functions.http("helloHttp", async (req, res) => {
   } while (folderExists);
 
   const [files] = await bucket.getFiles({ prefix: folderName });
-  const [files] = await bucket.getFiles({ prefix: "your-folder-name" });
 
   await Promise.all(
     files.map(async (file) => {
@@ -41,7 +40,6 @@ functions.http("helloHttp", async (req, res) => {
       const template = handlebars.compile(content.toString());
       const templatedContent = template(data);
       const newFileName = `${folderName}/${file.name}`;
-      const newFileName = `templated/${file.name}`;
       const fileStream = new Readable();
       fileStream.push(templatedContent);
       fileStream.push(null);
