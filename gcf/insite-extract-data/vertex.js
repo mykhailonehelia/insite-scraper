@@ -45,4 +45,22 @@ async function prompt(gemini, prompt) {
   return parseGeminiResponse(result.response);
 }
 
+/**
+ *
+ * @param {import("@google-cloud/vertexai").GenerateContentResponse} response
+ * @returns {string}
+ */
+function parseGeminiResponse(response) {
+  if (response.candidates === undefined) {
+    throw new Error(`Null response from Gemini: ${response}`);
+  }
+  let txt = "";
+  response.candidates.forEach((candidate) => {
+    candidate.content.parts.forEach((part) => {
+      txt += `${part.text}\n`;
+    });
+  });
+  return txt;
+}
+
 export { getGemini, prompt };

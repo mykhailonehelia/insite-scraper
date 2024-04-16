@@ -6,7 +6,7 @@ import { GcsCache } from "./cache.js";
  * @param {GcsCache} cache
  */
 async function runPageSpeed(url, cache) {
-  const cacheKey = ["pagespeed", url];
+  const cacheKey = [url, "raw-pagespeed-results"];
   const cacheResp = await cache.get(cacheKey);
   let rawResponse;
   if (cacheResp !== null) {
