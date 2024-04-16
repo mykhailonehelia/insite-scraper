@@ -2,6 +2,10 @@ import functions from '@google-cloud/functions-framework';
 import { Storage } from '@google-cloud/storage';
 import mustache from 'mustache';
 import { Readable } from 'stream';
+import handlebars from 'handlebars';
+import { customAlphabet } from 'nanoid';
+
+const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10);
 
 functions.http('helloHttp', async (req, res) => {
   if (req.method !== 'POST') {
@@ -19,14 +23,23 @@ functions.http('helloHttp', async (req, res) => {
 
   const storage = new Storage();
   const bucketName = 'your-bucket-name';
-  const folderName = 'your-folder-name';
+  let folderName;
   const bucket = storage.bucket(bucketName);
+  let folderExists = true;
+  do {
+    folderName = nanoid();
+    const [files] = await bucket.getFiles({ prefix: folderName });
+    folderExists = files.length > 0;
+  } while (folderExists);
 
   const [files] = await bucket.getFiles({ prefix: folderName });
+  const [files] = await bucket.getFiles({ prefix: 'your-folder-name' });
 
   await Promise.all(files.map(async (file) => {
     const [content] = await file.download();
-    const templatedContent = mustache.render(content.toString(), data);
+    const template = handlebars.compile(content.toString());
+    const templatedContent = template(data);
+    const newFileName = `${folderName}/${file.name}`;
     const newFileName = `templated/${file.name}`;
     const fileStream = new Readable();
     fileStream.push(templatedContent);
