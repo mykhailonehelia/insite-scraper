@@ -1,5 +1,5 @@
 import functions from "@google-cloud/functions-framework";
-import { Storage } from "@google-cloud/storage";
+import { Bucket, Storage } from "@google-cloud/storage";
 import { promises as fsPromises } from "fs";
 import { Readable } from "stream";
 import handlebars from "handlebars";
@@ -13,19 +13,19 @@ functions.http("helloHttp", async (req, res) => {
     return;
   }
 
-  let data;
-  try {
-    data = JSON.parse(req.body);
-  } catch {
-    res.status(400).send("Bad Request: Invalid JSON");
+  /** @type {object} */
+  const data = req.body;
+  if (data["Company Info"] === undefined) {
+    res.status(400).send("Invalid JSON");
     return;
   }
 
   const storage = new Storage();
-  const bucketName = "your-bucket-name";
+  const bucketName = "project-insite";
+  /** @type {string} */
   let folderName;
   const bucket = storage.bucket(bucketName);
-  const localTemplateFolderPath = "path/to/local/templates"; // Replace with the actual path to the local templates
+  const localTemplateFolderPath = "../template/dynamic"; // Replace with the actual path to the local templates
   let folderExists = true;
   do {
     folderName = nanoid();
@@ -36,56 +36,39 @@ functions.http("helloHttp", async (req, res) => {
   const localFiles = await fsPromises.readdir(localTemplateFolderPath);
 
   await Promise.all(
-    localFiles.map(async (fileName) => {
-      const content = await fsPromises.readFile(
-        `${localTemplateFolderPath}/${fileName}`,
-        "utf8"
-      );
-      const template = handlebars.compile(content);
-      const templatedContent = template(data);
-      const newFileName = `${folderName}/${fileName}`;
-      const template = handlebars.compile(content.toString());
-      const templatedContent = template(data);
-      const newFileName = `${folderName}/${file.name}`;
-      const fileStream = new Readable();
-      fileStream.push(templatedContent);
-      fileStream.push(null);
-      const newFile = bucket.file(newFileName);
-      await new Promise((resolve, reject) => {
-        fileStream
-          .pipe(newFile.createWriteStream())
-          .on("error", reject)
-          .on("finish", resolve);
-      });
-
-async function processAndUploadFile(fileName, data, folderName, localTemplateFolderPath, bucket) {
-  const content = await fsPromises.readFile(`${localTemplateFolderPath}/${fileName}`, 'utf8');
-  const template = handlebars.compile(content);
-  const templatedContent = template(data);
-  const newFileName = `${folderName}/${fileName}`;
-  const fileStream = new Readable();
-  fileStream.push(templatedContent);
-  fileStream.push(null);
-  const newFile = bucket.file(newFileName);
-  await new Promise((resolve, reject) => {
-    fileStream
-      .pipe(newFile.createWriteStream())
-      .on('error', reject)
-      .on('finish', resolve);
-  });
-}
-
-// Note: Ensure that the processAndUploadFile function is properly placed within the file,
-// either above or below the helloHttp function, depending on the existing code structure.
-// The function should be accessible within the scope where it's being called.
-    })
+    localFiles.map((fileName) =>
+      processAndUploadFile(
+        fileName,
+        data,
+        folderName,
+        localTemplateFolderPath,
+        bucket
+      )
+    )
   );
 
-  res.status(200).send("Files templated and uploaded successfully");
+  const url = `https://storage.googleapis.com/${bucketName}/${folderName}/index.html`;
+  res.status(200).send({ url });
 });
 
-async function processAndUploadFile(fileName, data, folderName, localTemplateFolderPath, bucket) {
-  const content = await fsPromises.readFile(`${localTemplateFolderPath}/${fileName}`, 'utf8');
+/**
+ * @param {string} fileName
+ * @param {object} data
+ * @param {string} folderName
+ * @param {string} localTemplateFolderPath
+ * @param {Bucket} bucket
+ */
+async function processAndUploadFile(
+  fileName,
+  data,
+  folderName,
+  localTemplateFolderPath,
+  bucket
+) {
+  const content = await fsPromises.readFile(
+    `${localTemplateFolderPath}/${fileName}`,
+    "utf8"
+  );
   const template = handlebars.compile(content);
   const templatedContent = template(data);
   const newFileName = `${folderName}/${fileName}`;
@@ -96,11 +79,7 @@ async function processAndUploadFile(fileName, data, folderName, localTemplateFol
   await new Promise((resolve, reject) => {
     fileStream
       .pipe(newFile.createWriteStream())
-      .on('error', reject)
-      .on('finish', resolve);
+      .on("error", reject)
+      .on("finish", resolve);
   });
 }
-
-// Note: Ensure that the processAndUploadFile function is properly placed within the file,
-// either above or below the helloHttp function, depending on the existing code structure.
-// The function should be accessible within the scope where it's being called.
