@@ -25,30 +25,22 @@ functions.http("helloHttp", async (req, res) => {
   const bucketName = "your-bucket-name";
   let folderName;
   const bucket = storage.bucket(bucketName);
-  const localTemplateFolderPath = 'path/to/local/templates'; // Replace with the actual path to the local templates
+  const localTemplateFolderPath = "path/to/local/templates"; // Replace with the actual path to the local templates
   let folderExists = true;
   do {
     folderName = nanoid();
-    try {
-      const [files] = await bucket.getFiles({ prefix: folderName });
-      folderExists = files.length > 0;
-    } catch (error) {
-      if (error.code === 404) {
-        folderExists = false;
-      } else {
-        throw error;
-      }
-    }
+    const [files] = await bucket.getFiles({ prefix: folderName });
     folderExists = files.length > 0;
   } while (folderExists);
 
   const localFiles = await fsPromises.readdir(localTemplateFolderPath);
 
-  const [files] = await bucket.getFiles({ prefix: folderName });
-
   await Promise.all(
     localFiles.map(async (fileName) => {
-      const content = await fsPromises.readFile(`${localTemplateFolderPath}/${fileName}`, 'utf8');
+      const content = await fsPromises.readFile(
+        `${localTemplateFolderPath}/${fileName}`,
+        "utf8"
+      );
       const template = handlebars.compile(content);
       const templatedContent = template(data);
       const newFileName = `${folderName}/${fileName}`;
