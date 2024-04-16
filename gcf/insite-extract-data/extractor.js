@@ -1,18 +1,54 @@
 import { GenerativeModel } from "@google-cloud/vertexai";
 import { JSDOM } from "jsdom";
+import Vibrant from "node-vibrant";
 import { extractJson, prompt } from "./vertex.js";
+import { getScreenshotData } from "./scrapingbee.js";
+import { GcsCache } from "./cache.js";
+import { html2md } from "./html2md.js";
 
 /**
  * @param {string} url
  * @param {string} html
+ * @param {GcsCache} cache
  * @param {GenerativeModel} gemini
  */
-async function extractData(url, html, gemini) {
+async function extractData(url, html, cache, gemini) {
   const rawData = extractRawData(url, html);
 
   const logo = await getLogoImageUrl(rawData.images, gemini);
+  const colors = await getColors(url, cache);
 
-  return { logo };
+  const companyInfo = await extractCompanyInfo(html, gemini);
+
+  return {
+    "Company Info": {
+      __type: "K",
+      data: {
+        Name: companyInfo.businessName,
+        Phone: companyInfo.phoneNumber,
+        Email: companyInfo.emailAddress,
+        "Street Address": companyInfo.address.street,
+        City: companyInfo.address.city,
+        State: companyInfo.address.state,
+        Zip: companyInfo.address.zip,
+      },
+    },
+    Style: {
+      __type: "K",
+      data: {
+        "Primary Color": colors.primary,
+        "Accent Color": colors.secondary,
+        "Dark Color": colors.dark,
+      },
+    },
+    Images: {
+      __type: "K",
+      data: {
+        "Logo Image URL": logo,
+      },
+    },
+    companyInfo,
+  };
 }
 
 /**
@@ -43,6 +79,44 @@ async function getLogoImageUrl(images, gemini) {
 }
 
 /**
+ * @param {number} r
+ * @param {number} g
+ * @param {number} b
+ */
+const rgbToHex = (r, g, b) =>
+  "#" +
+  [r, g, b]
+    .map((x) => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    })
+    .join("");
+
+/**
+ * @param {string} url
+ * @param {GcsCache} cache
+ */
+async function getColors(url, cache) {
+  /** @type {{[type: string]: string|null}} */
+  const colors = {
+    primary: null,
+    secondary: null,
+    dark: null,
+  };
+  const screenshotBuffer = await getScreenshotData(url, cache);
+  if (screenshotBuffer === null) return colors;
+
+  const palette = await Vibrant.from(screenshotBuffer).getPalette();
+  const primary = palette.Vibrant?.rgb;
+  const secondary = palette.Muted?.rgb;
+  const dark = palette.DarkMuted?.rgb;
+  colors.primary = primary ? rgbToHex(...primary) : null;
+  colors.secondary = secondary ? rgbToHex(...secondary) : null;
+  colors.dark = dark ? rgbToHex(...dark) : null;
+  return colors;
+}
+
+/**
  * @typedef {object} Image
  * @property {string} src
  * @property {string} alt
@@ -60,7 +134,6 @@ function extractRawData(url, html) {
   const { document } = new JSDOM(html).window;
 
   /**
-   *
    * @param {string} selector
    * @param {(e: Element) => *} mapFn
    * @returns
@@ -121,10 +194,7 @@ function extractRawData(url, html) {
   return result;
 }
 
-export { extractData };
-
 /**
- *
  * @param {string} text
  * @returns {string}
  */
@@ -139,7 +209,6 @@ function tidy(text) {
 /**
  * @param {string} from
  * @param {string} to
- * @returns
  */
 function resolveUrl(from, to) {
   const resolvedUrl = new URL(to, new URL(from, "resolve://"));
@@ -150,8 +219,10 @@ function resolveUrl(from, to) {
   }
   return resolvedUrl.toString();
 }
-/*
-const p = `
+
+async function extractCompanyInfo(html, gemini) {
+  const md = html2md(html);
+  const p = `
   The following is markdown from a webpage:
   
   """
@@ -167,6 +238,7 @@ const p = `
     "businessName": "",
     "tagline": "",
     "phoneNumber": "",
+    "emailAddress": "",
     "address": {
       "street": "",
       "city": "",
@@ -178,4 +250,9 @@ const p = `
     "mapsLink": "",
   }
   `;
-*/
+
+  const resp = await prompt(gemini, p);
+  return extractJson(resp);
+}
+
+export { extractData };

@@ -4,9 +4,9 @@ import { ScrapingBeeClient } from "scrapingbee";
 /**
  * @param {string} url
  * @param {GcsCache} cache
- * @returns {Promise<string|null>}
+ * @returns {Promise<object|null>}
  */
-async function getHtml(url, cache) {
+async function getRawScrapingBeeResponse(url, cache) {
   const apiKey = process.env.SCRAPINGBEE_API_KEY;
   if (apiKey === undefined) {
     throw new Error("no scrapingbee api key defined");
@@ -39,7 +39,32 @@ async function getHtml(url, cache) {
     }
     await cache.set(cacheKey, JSON.stringify(response));
   }
+
+  return response;
+}
+
+/**
+ * @param {string} url
+ * @param {GcsCache} cache
+ * @returns {Promise<string|null>}
+ */
+async function getHtml(url, cache) {
+  const response = await getRawScrapingBeeResponse(url, cache);
   return response ? response.body : null;
 }
 
-export { getHtml };
+/**
+ * @param {string} url
+ * @param {GcsCache} cache
+ * @returns {Promise<Buffer|null>}
+ */
+async function getScreenshotData(url, cache) {
+  const response = await getRawScrapingBeeResponse(url, cache);
+  if (response === null) return null;
+  /** @type {string} */
+  const base64Encoded = response.screenshot;
+  const buf = Buffer.from(base64Encoded, "base64");
+  return buf;
+}
+
+export { getHtml, getScreenshotData };

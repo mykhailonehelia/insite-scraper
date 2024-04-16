@@ -23,10 +23,10 @@ functions.http("entry", async (req, res) => {
   if (rawHtml !== null) {
     const gemini = getGemini("default-gas-project", "us-central1");
 
-    const result = await extractData(url, rawHtml, gemini);
+    const result = await extractData(url, rawHtml, cache, gemini);
     results.ok = true;
     results.data = result;
   }
 
-  res.status(200).send(results);
+  res.status(200).send("<pre>" + JSON.stringify(results, null, 2) + "</pre>");
 });
