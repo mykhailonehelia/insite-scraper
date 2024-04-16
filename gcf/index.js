@@ -29,7 +29,7 @@ functions.http("helloHttp", async (req, res) => {
   let folderExists = true;
   do {
     folderName = nanoid();
-    const [files] = await bucket.getFiles({ prefix: folderName });
+    const [files] = await bucket.getFiles({ prefix: folderName }); // Check if the folder already exists
     folderExists = files.length > 0;
   } while (folderExists);
 
@@ -57,8 +57,50 @@ functions.http("helloHttp", async (req, res) => {
           .on("error", reject)
           .on("finish", resolve);
       });
+
+async function processAndUploadFile(fileName, data, folderName, localTemplateFolderPath, bucket) {
+  const content = await fsPromises.readFile(`${localTemplateFolderPath}/${fileName}`, 'utf8');
+  const template = handlebars.compile(content);
+  const templatedContent = template(data);
+  const newFileName = `${folderName}/${fileName}`;
+  const fileStream = new Readable();
+  fileStream.push(templatedContent);
+  fileStream.push(null);
+  const newFile = bucket.file(newFileName);
+  await new Promise((resolve, reject) => {
+    fileStream
+      .pipe(newFile.createWriteStream())
+      .on('error', reject)
+      .on('finish', resolve);
+  });
+}
+
+// Note: Ensure that the processAndUploadFile function is properly placed within the file,
+// either above or below the helloHttp function, depending on the existing code structure.
+// The function should be accessible within the scope where it's being called.
     })
   );
 
   res.status(200).send("Files templated and uploaded successfully");
 });
+
+async function processAndUploadFile(fileName, data, folderName, localTemplateFolderPath, bucket) {
+  const content = await fsPromises.readFile(`${localTemplateFolderPath}/${fileName}`, 'utf8');
+  const template = handlebars.compile(content);
+  const templatedContent = template(data);
+  const newFileName = `${folderName}/${fileName}`;
+  const fileStream = new Readable();
+  fileStream.push(templatedContent);
+  fileStream.push(null);
+  const newFile = bucket.file(newFileName);
+  await new Promise((resolve, reject) => {
+    fileStream
+      .pipe(newFile.createWriteStream())
+      .on('error', reject)
+      .on('finish', resolve);
+  });
+}
+
+// Note: Ensure that the processAndUploadFile function is properly placed within the file,
+// either above or below the helloHttp function, depending on the existing code structure.
+// The function should be accessible within the scope where it's being called.
