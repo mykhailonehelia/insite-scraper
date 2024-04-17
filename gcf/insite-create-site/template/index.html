@@ -3,7 +3,7 @@
     <head>
 		<meta charset="UTF-8">
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
-		<title>Clean-It - Cleaning Company Service Responsive HTML5 Template</title>
+		<title>{{ data.[Company Info].data.Name }}</title>
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- Favicon Icon -->
@@ -17,13 +17,13 @@
 		<!-- modernizr js -->	
 		<script src="../static/assets/js/vendor/modernizr-2.8.3.min.js"></script>		
 		<script>
-			window.primaryColor="{{ Style.data.[Primary Color] }}";
+			window.primaryColor="{{ data.Style.data.[Primary Color] }}";
 		</script>
 		<style>
 			:root {
-				--primary-color: {{ Style.data.[Primary Color] }};
-				--secondary-color: {{ Style.data.[Accent Color] }};
-				--dark-color: {{ Style.data.[Dark Color] }};
+				--primary-color: {{ data.Style.data.[Primary Color] }};
+				--secondary-color: {{ data.Style.data.[Accent Color] }};
+				--dark-color: {{ data.Style.data.[Dark Color] }};
 			}
 		</style>
     </head>
@@ -36,8 +36,8 @@
 					<div class="top-address">
 						<p>	
 							<span><i class="icofont-ui-clock"></i>Opening Hour: 9:30AM - 5:30PM</span>
-							<a href="#"><i class="fas fa-phone-alt"></i>+998556778345</a>
-							<a href="#"><i class="fas fa-envelope"></i>demo@example.com</a>
+							<a href="#"><i class="fas fa-phone-alt"></i>{{ data.[Company Info].data.Phone }}</a>
+							<a href="#"><i class="fas fa-envelope"></i>FIXME_EMAIL</a>
 						</p>
 					</div>
 				</div>
@@ -62,11 +62,11 @@
 				<div class="row logo-left">				
 					<div class="col-md-3 col-sm-3 col-xs-4">
 						<div class="logo">
-							<a class="main_sticky_main_l" href="index.html" title="cleanit">
-								<img src="../static/assets/images/logo.png" alt="cleanit">
+							<a class="main_sticky_main_l" href="index.html" title="logo">
+								<img src="{{ data.Images.data.[Logo Image URL] }}" alt="logo">
 							</a>
-							<a class="main_sticky_l" href="index.html" title="cleanit">
-								<img src="../static/assets/images/logo2.png" alt="cleanit">
+							<a class="main_sticky_l" href="index.html" title="logo">
+								<img src="{{ data.Images.data.[Logo Image URL] }}" alt="logo">
 							</a>
 						</div>	  
 	  				</div>
@@ -238,7 +238,7 @@
 				<div class="banner_area_inner">			
 					<div class="witr_animate_area witr_animate_height">
 						<div class="witr_animate_content text-">
-							<h1 class="cd-headline clip is-full-width">Best Cleaning <br>										
+							<h1 class="cd-headline clip is-full-width">{{ data.[Company Info].data.Name }}<br>
 								<span class="cd-words-wrapper witr_ani_text">
 									<b class="is-hidden">House Cleaning</b> 
 									<b class="is-visible">Office Cleaning</b>

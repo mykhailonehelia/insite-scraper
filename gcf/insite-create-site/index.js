@@ -7,7 +7,7 @@ import { customAlphabet } from "nanoid";
 
 const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 
-functions.http("helloHttp", async (req, res) => {
+functions.http("entry", async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method Not Allowed");
     return;
@@ -15,7 +15,7 @@ functions.http("helloHttp", async (req, res) => {
 
   /** @type {object} */
   const data = req.body;
-  if (data["Company Info"] === undefined) {
+  if (data.data === undefined) {
     res.status(400).send("Invalid JSON");
     return;
   }
