@@ -17,13 +17,13 @@
 		<!-- modernizr js -->	
 		<script src="../static/assets/js/vendor/modernizr-2.8.3.min.js"></script>		
 		<script>
-			window.primaryColor="{{ data.Style.data.[Primary Color] }}";
+			window.primaryColor="{{data.Style.data.[Primary Color]}}";
 		</script>
 		<style>
 			:root {
-				--primary-color: {{ data.Style.data.[Primary Color] }};
-				--secondary-color: {{ data.Style.data.[Accent Color] }};
-				--dark-color: {{ data.Style.data.[Dark Color] }};
+				--primary-color: {{data.Style.data.[Primary Color]}};
+				--secondary-color: {{data.Style.data.[Accent Color]}};
+				--dark-color: {{data.Style.data.[Dark Color]}};
 			}
 		</style>
     </head>
@@ -36,8 +36,12 @@
 					<div class="top-address">
 						<p>	
 							<span><i class="icofont-ui-clock"></i>Opening Hour: 9:30AM - 5:30PM</span>
-							<a href="#"><i class="fas fa-phone-alt"></i>{{ data.[Company Info].data.Phone }}</a>
-							<a href="#"><i class="fas fa-envelope"></i>FIXME_EMAIL</a>
+							{{#if data.[Company Info].data.Phone}}
+							<a href="#"><i class="fas fa-phone-alt"></i>{{data.[Company Info].data.Phone}}</a>
+							{{/if}}
+							{{#if data.[Company Info].data.Email}}
+							<a href="#"><i class="fas fa-envelope"></i>{{data.[Company Info].data.Email}}</a>
+							{{/if}}
 						</p>
 					</div>
 				</div>
@@ -45,6 +49,7 @@
 				<div class="col-lg-4 col-md-4 col-sm-12 ">
 					<div class="top-right-menu">
 						<ul class="social-icons text-right text_m_center">
+							<div>FIXME FIXME</div>
 							<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
 							<li><a href="#"><i class="fab fa-twitter"></i></a></li>
 							<li><a href="#"><i class="fab fa-instagram"></i></a></li>
@@ -63,10 +68,10 @@
 					<div class="col-md-3 col-sm-3 col-xs-4">
 						<div class="logo">
 							<a class="main_sticky_main_l" href="index.html" title="logo">
-								<img src="{{ data.Images.data.[Logo Image URL] }}" alt="logo">
+								<img src="{{data.Images.data.[Logo Image URL]}}" alt="logo">
 							</a>
 							<a class="main_sticky_l" href="index.html" title="logo">
-								<img src="{{ data.Images.data.[Logo Image URL] }}" alt="logo">
+								<img src="{{data.Images.data.[Logo Image URL]}}" alt="logo">
 							</a>
 						</div>	  
 	  				</div>
@@ -150,8 +155,8 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="mobile_menu_logo text-center">
-				<a href="index.html" title="cleanit">
-					<img src="../static/assets/images/logo.png" alt="cleanit">
+				<a href="index.html" title="logo">
+					<img src="{{data.Images.data.[Logo Image URL]}}" alt="logo">
 				</a>		
 				</div>
 			</div>
@@ -238,26 +243,22 @@
 				<div class="banner_area_inner">			
 					<div class="witr_animate_area witr_animate_height">
 						<div class="witr_animate_content text-">
-							<h1 class="cd-headline clip is-full-width">{{ data.[Company Info].data.Name }}<br>
+							<h1 class="cd-headline clip is-full-width">{{data.[Company Info].data.Name}}<br>
 								<span class="cd-words-wrapper witr_ani_text">
-									<b class="is-hidden">House Cleaning</b> 
-									<b class="is-visible">Office Cleaning</b>
-									<b class="is-hidden">Kitchen Cleaning</b> 
-									<b class="is-hidden">Glass Cleaning</b> 
-									<b class="is-hidden"> Other Cleaning</b> 
-									<b class="is-hidden"> +(99) 5684 696 365</b>  
-									<b class="is-hidden">Office In New York</b>						
+									{{#each data.Services.data}}
+									<b class="is-hidden">{{this.Name}}</b> 
+									{{/each}}
 								</span>		 	
 							</h1>								
 						</div> 
 					</div>
 					<div class="banner_text">
-						<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered.</p>
+						<p>FIXME Second Tagline</p>
 					</div>
 					<div class="witr_button_area">
 						<div class="witr_btn_style mr">
 							<div class="witr_btn_sinner">	
-								<a href="#" class="witr_btn">Our Service
+								<a href="#" class="witr_btn">FIXME FIRST CTA LINK
 									<div class="pluse_btn_icon">
 										<span class="icofont-gear-alt"></span>
 									</div>	
@@ -285,68 +286,24 @@
 						<div class="witr_icon_title">
 							<i  class="fas fa-table-tennis"></i>						
 						</div>
-						<h3>We only use Eco Friendly</h3>		
-						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore. </p>		
+						<h3>FIXME Service List Header</h3>		
+						<p>FIXME Service List Description </p>		
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="witr_cfeature1 feature_active text-center feature_top">
 			<div class="witr_islidess_slick witr_cfeature_idps">
-				<!-- cleanit_feature_01	 -->
+				{{#each data.Services.data}}
 				<div class="col-lg-12">	
 					<div class="sub-border-2 all_feature_color ">                 
 						<div class="sub-item ">
-							<i class="icofont-hospital"></i>
-							<h3><a href="#">Office<br> Cleaning</a></h3>
+							<i class="fas {{this.[Font Awesome Icon]}}"></i>
+							<h3><a href="#">{{this.Description}}</a></h3>
 						</div> 		   
 					</div> 
 				</div>
-				<!-- cleanit_feature_02	 -->
-				<div class="col-lg-12">	
-					<div class="sub-border-2 all_feature_color ">                 
-						<div class="sub-item ">
-							<i class="icofont-pen-holder"></i>
-							<h3><a href="#" >Kitchen<br> Cleaning</a></h3>
-						</div> 		   
-					</div> 
-				</div>
-				<!-- cleanit_feature_03	 -->
-				<div class="col-lg-12">	
-					<div class="sub-border-2 all_feature_color ">                 
-						<div class="sub-item ">
-							<i class="icofont-glass"></i>
-							<h3><a href="#" >Glass<br> Cleaning</a></h3>
-						</div> 		   
-					</div> 
-				</div>
-				<!-- cleanit_feature_04	 -->
-				<div class="col-lg-12">	
-					<div class="sub-border-2 all_feature_color ">                 
-						<div class="sub-item ">
-							<i class="icofont-road"></i>
-							<h3><a href="#" >Road<br> Cleaning</a></h3>
-						</div> 		   
-					</div> 
-				</div>
-				<!-- cleanit_feature_05	 -->
-				<div class="col-lg-12">	
-					<div class="sub-border-2 all_feature_color ">                 
-						<div class="sub-item ">
-							<i class="icofont-hour-glass"></i>
-							<h3><a href="#" >Other<br> Cleaning</a></h3>
-						</div> 		   
-					</div> 
-				</div>
-				<!-- cleanit_feature_06	 -->
-				<div class="col-lg-12">	
-					<div class="sub-border-2 all_feature_color ">                 
-						<div class="sub-item ">
-							<i class="icofont-ui-home"></i>
-							<h3><a href="#" >House <br>Cleaning</a></h3>
-						</div> 		   
-					</div> 
-				</div>
+				{{/each}}
 			</div>
 		</div>
 	</div>
@@ -363,8 +320,8 @@
 						<div class="witr_icon_title">
 							<i class="fas fa-table-tennis"></i>			
 						</div>
-						<h3>Exceptional Commercial  to Your Needs?</h3>		
-						<p>Phasellus tempus posuere pulvinar. Integer ac faucibus mi, vel viverra lectus. Curabitur magna nulla, scelerisque id justo quis, rhoncus congue urna. Nullam auctor aliquam libero. Sed et molestie nibh, eget rmentum felis.  </p>		
+						<h3>FIXME SECTION 1 HEADER</h3>		
+						<p>FIXME SECTION 1 BODY</p>		
 					</div>
 				</div>
 				<div class="row">
