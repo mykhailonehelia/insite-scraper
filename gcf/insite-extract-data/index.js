@@ -1,11 +1,11 @@
 import functions from "@google-cloud/functions-framework";
 import { Storage } from "@google-cloud/storage";
-import { GcsCache } from "./cache.js";
+import { GcsCache } from "./helpers/cache.js";
 // import { runPageSpeed } from "./pagespeed.js";
-import { getHtml } from "./scrapingbee.js";
+import { getHtml } from "./helpers/scrapingbee.js";
 // import { getGemini, prompt } from "./vertex.js";
 import { extractData } from "./extractor.js";
-import { getGemini } from "./vertex.js";
+import { getGemini } from "./helpers/gemini.js";
 
 functions.http("entry", async (req, res) => {
   const url = req.query.url;
@@ -15,15 +15,18 @@ functions.http("entry", async (req, res) => {
 
   const storage = new Storage();
   const cache = new GcsCache(storage.bucket("project-insite-cache"));
+  const gemini = getGemini("default-gas-project", "us-central1");
 
   const results = { ok: false, data: null };
 
-  //const psRes = await runPageSpeed(url, cache);
-  const rawHtml = await getHtml(url, cache);
+  const params = {
+    url,
+    cache,
+    gemini,
+  };
+  const rawHtml = await getHtml(params);
   if (rawHtml !== null) {
-    const gemini = getGemini("default-gas-project", "us-central1");
-
-    const result = await extractData(url, rawHtml, cache, gemini);
+    const result = await extractData(params);
     results.ok = true;
     results.data = result;
   }

@@ -1,5 +1,5 @@
 import google from "googleapis";
-import { GcsCache } from "./cache.js";
+import { GcsCache } from "./helpers/cache.js";
 
 /**
  * @param {string} url

@@ -1,28 +1,22 @@
-import { GcsCache } from "./cache.js";
+import { useCache } from "./cache.js";
 import { ScrapingBeeClient } from "scrapingbee";
 
 /**
- * @param {string} url
- * @param {GcsCache} cache
+ * @param {import("../types.js").ExtractorParameters} params
  * @returns {Promise<object|null>}
  */
-async function getRawScrapingBeeResponse(url, cache) {
+async function getRawScrapingBeeResponse(params) {
   const apiKey = process.env.SCRAPINGBEE_API_KEY;
   if (apiKey === undefined) {
     throw new Error("no scrapingbee api key defined");
   }
 
-  let response;
-
-  const cacheKey = [url, "raw-scrapingbee-response"];
-  const cachedResponse = await cache.get(cacheKey);
-  if (cachedResponse !== null) {
-    response = JSON.parse(cachedResponse);
-  } else {
+  const cacheKey = [params.url, "raw-scrapingbee-response"];
+  const response = useCache(params.cache, cacheKey, async () => {
     const client = new ScrapingBeeClient(apiKey);
     try {
       const result = await client.get({
-        url: url,
+        url: params.url,
         params: {
           screenshot: true,
           screenshot_full_page: true,
@@ -32,34 +26,31 @@ async function getRawScrapingBeeResponse(url, cache) {
         },
       });
       const td = new TextDecoder();
-      response = JSON.parse(td.decode(result.data));
+      return JSON.parse(td.decode(result.data));
     } catch (err) {
       console.error(err);
-      response = null;
+      return null;
     }
-    await cache.set(cacheKey, JSON.stringify(response));
-  }
+  });
 
   return response;
 }
 
 /**
- * @param {string} url
- * @param {GcsCache} cache
- * @returns {Promise<string|null>}
+ * @param {import("../types.js").ExtractorParameters} params
+ * @returns {Promise<string>}
  */
-async function getHtml(url, cache) {
-  const response = await getRawScrapingBeeResponse(url, cache);
-  return response ? response.body : null;
+async function getHtml(params) {
+  const response = await getRawScrapingBeeResponse(params);
+  return response ? response.body : "";
 }
 
 /**
- * @param {string} url
- * @param {GcsCache} cache
+ * @param {import("../types.js").ExtractorParameters} params
  * @returns {Promise<Buffer|null>}
  */
-async function getScreenshotData(url, cache) {
-  const response = await getRawScrapingBeeResponse(url, cache);
+async function getScreenshotData(params) {
+  const response = await getRawScrapingBeeResponse(params);
   if (response === null) return null;
   /** @type {string} */
   const base64Encoded = response.screenshot;

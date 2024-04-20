@@ -40,7 +40,7 @@ function getGemini(project, location, model = "gemini-1.0-pro") {
  * @param {string} prompt
  * @returns {Promise<string>}
  */
-async function prompt(gemini, prompt) {
+async function promptGemini(gemini, prompt) {
   const result = await gemini.generateContent(prompt);
   return parseGeminiResponse(result.response);
 }
@@ -86,4 +86,4 @@ function extractJson(response) {
   return JSON.parse(jsonLines.join("\n"));
 }
 
-export { getGemini, prompt, extractJson };
+export { getGemini, promptGemini, extractJson };
