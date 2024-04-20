@@ -1,3 +1,25 @@
+import { getCompanyInfo } from "../helpers/companyInfo.js";
+
+/**
+ *
+ * @param {import("../types").ExtractorParameters} params
+ * @returns {Promise<import("../types").Table>}
+ */
+async function extractServices(params) {
+  /** @type {import("../types").Table} */
+  const table = {
+    __type: "T",
+    name: "Services",
+    data: [],
+  };
+
+  const services = await getCompanyInfo(params).services;
+
+  return table;
+}
+
+export { extractServices };
+
 /*
   const enrichedServicePromises = companyInfo.services.map((service) =>
     enrichService(gemini, cache, service)
