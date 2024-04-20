@@ -6,7 +6,6 @@ import { getHtml } from "./scrapingbee.js";
 /**
  *
  * @param {import("../types").ExtractorParameters} params
- * @returns {Promise<object>}
  */
 async function getCompanyInfo(params) {
   const cacheKey = [params.url, "company-info-json"];
@@ -28,13 +27,11 @@ async function getCompanyInfo(params) {
   {
     "businessName": "",
     "phoneNumber": "",
-    "emailAddress": "",
-    "address": {
-      "street": "",
-      "city": "",
-      "state": "",
-      "zip": ""
-    },
+    "email": "",
+    "streetAddress": "",
+    "city": "",
+    "state": "",
+    "zip": "",
     "services": ["service1", "service2"],
     "socialMedia": ["link1", "link2"],
     "mapsLink": "",
@@ -42,7 +39,32 @@ async function getCompanyInfo(params) {
   `;
 
     const resp = await promptGemini(params.gemini, p);
-    return extractJson(resp);
+    const json = extractJson(resp);
+    /**
+     * @param {string|null|undefined} val
+     */
+
+    const asString = (val) => val || "";
+    /**
+     *
+     * @param {any[]} val
+     */
+    const asStringArray = (val) =>
+      val.length > 0 ? val.map((e) => asString(e)) : [];
+
+    const result = {
+      businessName: asString(json.businessName),
+      phoneNumber: asString(json.phoneNumber),
+      email: asString(json.email),
+      streetAddress: asString(json.streetAddress),
+      city: asString(json.city),
+      state: asString(json.state),
+      zip: asString(json.zip),
+      services: asStringArray(json.services),
+      socialMedia: asStringArray(json.socialMedia),
+      mapsLink: asString(json.mapsLink),
+    };
+    return result;
   });
   return companyInfoJson;
 }
