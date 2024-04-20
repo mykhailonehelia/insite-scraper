@@ -3,8 +3,8 @@ import { extractDataFromHTML } from "../helpers/html.js";
 import { getHtml } from "../helpers/scrapingbee.js";
 
 /**
- * @param {import("../types").ExtractorParameters} params
- * @returns {Promise<import("../types").Table>}
+ * @param {import("../types.js").ExtractorParameters} params
+ * @returns {Promise<import("../types.js").Table>}
  */
 async function getImages(params) {
   const imageUrlPromises = [getLogoImageUrl(params)];
@@ -20,7 +20,7 @@ async function getImages(params) {
 }
 
 /**
- * @param {import("../types").ExtractorParameters} params
+ * @param {import("../types.js").ExtractorParameters} params
  * @returns {Promise<string>}
  */
 async function getLogoImageUrl(params) {

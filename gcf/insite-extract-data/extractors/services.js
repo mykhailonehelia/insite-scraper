@@ -1,14 +1,15 @@
 import { useCache } from "../helpers/cache.js";
 import { getCompanyInfo } from "../helpers/companyInfo.js";
 import { extractJson, promptGemini } from "../helpers/gemini.js";
+import validFaIcons from "../helpers/fa-icon-list.json" with { type: "json" };
 
 /**
  *
- * @param {import("../types").ExtractorParameters} params
- * @returns {Promise<import("../types").Table>}
+ * @param {import("../types.js").ExtractorParameters} params
+ * @returns {Promise<import("../types.js").Table>}
  */
 async function extractServices(params) {
-  /** @type {import("../types").Table} */
+  /** @type {import("../types.js").Table} */
   const table = {
     __type: "T",
     name: "Services",
@@ -28,7 +29,7 @@ async function extractServices(params) {
 /**
  *
  * @param {string} service
- * @param {import("../types").ExtractorParameters} params
+ * @param {import("../types.js").ExtractorParameters} params
  */
 async function enrichService(service, params) {
   const normalizedService = service.trim().toLowerCase();
@@ -36,13 +37,14 @@ async function enrichService(service, params) {
   const cacheKey = ["service", normalizedService];
   const enrichedService = await useCache(params.cache, cacheKey, async () => {
     const p = `
-    My company does "${normalizedService}". Please write a concise (< 7 words) description and choose the most relevant free font awesome icon.
+    My company does "${normalizedService}". Please write a concise (< 7 words) description and choose the most relevant font awesome icon.
+    The font awesome icon must be: free, in version 5, and solid. Write only the icon name -- do not precede with "fas"
     
     Please output in the following format in a code block:
     {
       "name": "Titleized Service Name",
       "description": "Some description",
-      "icon": "fas fa-icon"
+      "icon": "fa-icon"
     }
     `;
     const resp = await promptGemini(params.gemini, p);
@@ -53,6 +55,11 @@ async function enrichService(service, params) {
       typeof parsed.icon !== "string"
     ) {
       throw new Error(`Invalid service enrichment: ${resp}`);
+    }
+
+    if (!validFaIcons.includes(parsed.icon)) {
+      console.warn(`invalid fa icon: ${parsed.icon}`);
+      parsed.icon = "";
     }
     return {
       Name: parsed.name,

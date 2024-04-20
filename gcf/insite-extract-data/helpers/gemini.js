@@ -1,9 +1,11 @@
 import {
+  ClientError,
   GenerativeModel,
   HarmBlockThreshold,
   HarmCategory,
   VertexAI,
 } from "@google-cloud/vertexai";
+import { sleep } from "./random.js";
 
 const safetySettings = [
   {
@@ -41,8 +43,18 @@ function getGemini(project, location, model = "gemini-1.0-pro") {
  * @returns {Promise<string>}
  */
 async function promptGemini(gemini, prompt) {
-  const result = await gemini.generateContent(prompt);
-  return parseGeminiResponse(result.response);
+  let result;
+  try {
+    const res = await gemini.generateContent(prompt);
+    result = parseGeminiResponse(res.response);
+  } catch (err) {
+    if (err instanceof ClientError) {
+      console.warn(`Got client error, retrying after 10 seconds: ${err}`);
+      await sleep(10 * 1000);
+      result = await promptGemini(gemini, prompt);
+    }
+  }
+  return result || "";
 }
 
 /**
@@ -67,23 +79,27 @@ function parseGeminiResponse(response) {
  * @param {string} response
  */
 function extractJson(response) {
-  console.log(`extract json input\n\n${response}\n\n`);
-  const jsonLines = [];
-  let inCodeBlock = false;
-  const codeBlockDelimiterRegexp = /^```/;
-  for (const line of response.split("\n")) {
-    if (inCodeBlock && codeBlockDelimiterRegexp.test(line)) {
-      break;
+  let obj;
+  try {
+    obj = JSON.parse(response);
+  } catch (err) {
+    const jsonLines = [];
+    let inCodeBlock = false;
+    const codeBlockDelimiterRegexp = /^```/;
+    for (const line of response.split("\n")) {
+      if (inCodeBlock && codeBlockDelimiterRegexp.test(line)) {
+        break;
+      }
+      if (inCodeBlock) {
+        jsonLines.push(line);
+      }
+      if (!inCodeBlock && codeBlockDelimiterRegexp.test(line)) {
+        inCodeBlock = true;
+      }
     }
-    if (inCodeBlock) {
-      jsonLines.push(line);
-    }
-    if (!inCodeBlock && codeBlockDelimiterRegexp.test(line)) {
-      inCodeBlock = true;
-    }
+    obj = JSON.parse(jsonLines.join("\n"));
   }
-  console.log(`extract json output\n\n${jsonLines.join("\n")}\n\n`);
-  return JSON.parse(jsonLines.join("\n"));
+  return obj;
 }
 
 export { getGemini, promptGemini, extractJson };
