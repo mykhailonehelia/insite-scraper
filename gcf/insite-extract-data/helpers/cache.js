@@ -67,9 +67,11 @@ class GcsCache {
 }
 
 /**
+ * @template T
  * @param {GcsCache} cache
  * @param {string[]} key
- * @param {() => Promise<any>} func
+ * @param {() => Promise<T>} func
+ * @returns {Promise<T>}
  */
 async function useCache(cache, key, func) {
   const cachedResponse = await cache.get(key);
