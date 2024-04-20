@@ -1,4 +1,5 @@
 import { Bucket } from "@google-cloud/storage";
+import { Mutex } from "async-mutex";
 
 class GcsCache {
   /**
@@ -6,6 +7,9 @@ class GcsCache {
    */
   constructor(bucket) {
     this.bucket = bucket;
+    this.mutex = new Mutex();
+    /** @type {import("../types").StringIndexedObject} */
+    this.cache = {};
   }
 
   /**
@@ -14,12 +18,21 @@ class GcsCache {
    */
   async get(key) {
     const encodedKey = GcsCache.sanitizeKey(key);
+    if (this.cache[encodedKey] !== undefined) {
+      console.log(`GET (CACHED) ${encodedKey}`);
+      return this.cache[encodedKey];
+    }
+    const release = await this.mutex.acquire();
     console.log(`GET ${encodedKey}`);
 
     try {
       const [file] = await this.bucket.file(encodedKey).download();
-      return file.toString();
+      const str = file.toString();
+      this.cache[encodedKey] = str;
+      release();
+      return str;
     } catch (err) {
+      release();
       if (err.code === 404) {
         return null;
       } else {
@@ -33,12 +46,15 @@ class GcsCache {
    * @param {string} value
    */
   async set(key, value) {
+    const release = await this.mutex.acquire();
     const encodedKey = GcsCache.sanitizeKey(key);
+    this.cache[encodedKey] = value;
     console.log(`SET ${encodedKey}`);
 
     await this.bucket.file(encodedKey).save(value, {
       contentType: "text/plain",
     });
+    release();
   }
 
   /**
