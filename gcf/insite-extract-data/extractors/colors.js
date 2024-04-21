@@ -16,11 +16,11 @@ const rgbToHex = (r, g, b) =>
     .join("");
 
 /**
- * @param {import("../types").ExtractorParameters} params
- * @returns {Promise<import("../types").Table>}
+ * @param {import("../types.js").ExtractorParameters} params
+ * @returns {Promise<import("../types.js").Table>}
  */
 async function getColors(params) {
-  /** @type {import("../types").Table} */
+  /** @type {import("../types.js").Table} */
   const table = {
     __type: "K",
     name: "Colors",

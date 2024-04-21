@@ -5,7 +5,7 @@ import { getHtml } from "./scrapingbee.js";
 
 /**
  *
- * @param {import("../types").ExtractorParameters} params
+ * @param {import("../types.js").ExtractorParameters} params
  */
 async function getCompanyInfo(params) {
   const cacheKey = [params.url, "company-info-json"];

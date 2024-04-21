@@ -8,7 +8,7 @@ class GcsCache {
   constructor(bucket) {
     this.bucket = bucket;
     this.mutex = new Mutex();
-    /** @type {import("../types").StringIndexedObject} */
+    /** @type {import("../types.js").StringIndexedObject} */
     this.cache = {};
   }
 

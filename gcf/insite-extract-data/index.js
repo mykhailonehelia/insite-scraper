@@ -17,7 +17,17 @@ functions.http("entry", async (req, res) => {
   const cache = new GcsCache(storage.bucket("project-insite-cache"));
   const gemini = getGemini("default-gas-project", "us-central1");
 
-  const results = { ok: false, data: null };
+  /**
+   * @typedef {object} Results
+   * @property {boolean} ok
+   * @property {{[key: string]: import("./types.js").Table}|null} data
+   */
+
+  /** @type {Results} */
+  const results = {
+    ok: false,
+    data: null,
+  };
 
   const params = {
     url,

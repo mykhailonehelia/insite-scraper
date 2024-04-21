@@ -1,5 +1,5 @@
 import { GenerativeModel } from "@google-cloud/vertexai";
-import { GcsCache } from "./helpers/cache";
+import { GcsCache } from "./helpers/cache.js";
 
 /**
  * @typedef {{[index: string]: string}} StringIndexedObject

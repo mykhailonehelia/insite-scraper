@@ -12,11 +12,11 @@ export async function extractCompanyInfo(params) {
     data: {
       Name: companyInfoJson.businessName,
       Phone: companyInfoJson.phoneNumber,
-      Email: companyInfoJson.emailAddress,
-      "Street Address": companyInfoJson.address.street,
-      City: companyInfoJson.address.city,
-      State: companyInfoJson.address.state,
-      Zip: companyInfoJson.address.zip,
+      Email: companyInfoJson.email,
+      "Street Address": companyInfoJson.streetAddress,
+      City: companyInfoJson.city,
+      State: companyInfoJson.state,
+      Zip: companyInfoJson.zip,
     },
   };
 }
