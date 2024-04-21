@@ -79,7 +79,7 @@ async function useCache(cache, key, func) {
   if (cachedResponse !== null) {
     response = JSON.parse(cachedResponse);
   } else {
-    const response = await func();
+    response = await func();
     await cache.set(key, JSON.stringify(response));
   }
   return response;
