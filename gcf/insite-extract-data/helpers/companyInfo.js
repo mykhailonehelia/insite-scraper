@@ -1,5 +1,5 @@
 import { useCache } from "./cache.js";
-import { promptGemini, extractJson } from "./gemini.js";
+import { promptGemini, extractJson, promptGeminiStrict } from "./gemini.js";
 import { html2md } from "./html2md.js";
 import { getHtml } from "./scrapingbee.js";
 
@@ -28,6 +28,7 @@ async function getCompanyInfo(params) {
     "businessName": "",
     "phoneNumber": "",
     "email": "",
+    "preferredMethodOfContact": "phone" | "email",
     "streetAddress": "",
     "city": "",
     "state": "",
@@ -38,7 +39,13 @@ async function getCompanyInfo(params) {
   }
   `;
 
-    const resp = await promptGemini(params.gemini, p);
+    const resp = await promptGeminiStrict(params.gemini, p, (resp) => {
+      const json = extractJson(resp);
+      const pmoc = json.preferredMethodOfContact;
+      if (pmoc !== "email" && pmoc !== "phone")
+        return "preferredMethodOfContact must be either 'email' or 'phone'";
+      return null;
+    });
     const json = extractJson(resp);
     /**
      * @param {string|null|undefined} val
@@ -52,10 +59,25 @@ async function getCompanyInfo(params) {
     const asStringArray = (val) =>
       val.length > 0 ? val.map((e) => asString(e)) : [];
 
+    /** @param {string} val */
+    const asPreferredMethodOfContact = (val) => {
+      if (val === "email") {
+        return "email";
+      } else if (val === "phone") {
+        return "phone";
+      } else {
+        throw new Error(`Unknown preferred method of contact: '${val}'`);
+      }
+    };
+
     const result = {
       businessName: asString(json.businessName),
       phoneNumber: asString(json.phoneNumber),
       email: asString(json.email),
+      /** @type {"email"|"phone"} */
+      preferredMethodOfContact: asPreferredMethodOfContact(
+        json.preferredMethodOfContact
+      ),
       streetAddress: asString(json.streetAddress),
       city: asString(json.city),
       state: asString(json.state),
@@ -66,6 +88,7 @@ async function getCompanyInfo(params) {
     };
     return result;
   });
+  console.log("companyInfoJson", companyInfoJson);
   return companyInfoJson;
 }
 

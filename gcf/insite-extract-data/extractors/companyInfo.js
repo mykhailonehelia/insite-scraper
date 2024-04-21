@@ -13,6 +13,7 @@ export async function extractCompanyInfo(params) {
       Name: companyInfoJson.businessName,
       Phone: companyInfoJson.phoneNumber,
       Email: companyInfoJson.email,
+      "Preferred Method of Contact": companyInfoJson.preferredMethodOfContact,
       "Street Address": companyInfoJson.streetAddress,
       City: companyInfoJson.city,
       State: companyInfoJson.state,

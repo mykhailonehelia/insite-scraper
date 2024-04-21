@@ -19,7 +19,8 @@ functions.http("entry", async (req, res) => {
     res.status(400).send("Invalid JSON");
     return;
   }
-
+  const cleanedData = tidySchema(data);
+  console.log(JSON.stringify(cleanedData, null, 2));
   const storage = new Storage();
   const bucketName = "project-insite";
   /** @type {string} */
@@ -39,7 +40,7 @@ functions.http("entry", async (req, res) => {
     localFiles.map((fileName) =>
       processAndUploadFile(
         fileName,
-        data,
+        cleanedData,
         folderName,
         localTemplateFolderPath,
         bucket
@@ -82,4 +83,45 @@ async function processAndUploadFile(
       .on("error", reject)
       .on("finish", resolve);
   });
+}
+
+/**
+ * @param {*} inputObject
+ */
+function tidySchema(inputObject) {
+  const root = inputObject.data;
+
+  const companyInfo = root["Company Info"].data;
+  const colors = root.Colors.data;
+  const images = root.Images.data;
+  const rawServices = root.Services.data;
+  const mappedServices = rawServices.map((service) => {
+    return {
+      name: service.Name,
+      description: service.Description,
+      icon: service["Font Awesome Icon"],
+    };
+  });
+
+  return {
+    companyInfo: {
+      name: companyInfo.Name,
+      phone: companyInfo.Phone,
+      email: companyInfo.Email,
+      preferredMethodOfContact: companyInfo["Preferred Method of Contact"],
+      streetAddress: companyInfo["Street Address"],
+      city: companyInfo.City,
+      state: companyInfo.State,
+      zip: companyInfo.Zip,
+    },
+    colors: {
+      primary: colors["Primary Color"],
+      accent: colors["Accent Color"],
+      dark: colors["Dark Color"],
+    },
+    images: {
+      logo: images["Logo Image URL"],
+    },
+    services: mappedServices,
+  };
 }
