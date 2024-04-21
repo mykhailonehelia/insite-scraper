@@ -59,6 +59,39 @@ async function promptGemini(gemini, prompt) {
 
 /**
  *
+ * @param {GenerativeModel} gemini
+ * @param {string} prompt
+ * @param {(resp: string) => string|null} validatorFn
+ * @returns {Promise<string>}
+ */
+async function promptGeminiStrict(gemini, prompt, validatorFn) {
+  let tries = 0;
+  let p = prompt;
+  let ok = false;
+
+  /** @type {string} */
+  let resp = "";
+  while (!ok) {
+    if (tries > 2) {
+      throw new Error(`unable to get correct response after 3 tries: ${p}`);
+    }
+    resp = await promptGemini(gemini, p);
+    const reasons = validatorFn(resp);
+    if (reasons === null) {
+      ok = true;
+      break;
+    } else {
+      console.warn(`promptGeminiStrict: got incorrect response: ${reasons}`);
+      tries++;
+      p += `\n\n${reasons}`;
+    }
+  }
+
+  return resp;
+}
+
+/**
+ *
  * @param {import("@google-cloud/vertexai").GenerateContentResponse} response
  * @returns {string}
  */
@@ -102,4 +135,4 @@ function extractJson(response) {
   return obj;
 }
 
-export { getGemini, promptGemini, extractJson };
+export { getGemini, promptGemini, promptGeminiStrict, extractJson };
