@@ -26,6 +26,7 @@ async function getImages(params) {
 async function getLogoImageUrl(params) {
   const html = await getHtml(params);
   const extractedData = await extractDataFromHTML(params.url, html);
+  console.log(extractedData.images.length, extractedData.images);
   const p = `
   Here are a list of images pulled from a website:
   """

@@ -32,7 +32,6 @@ function extractDataFromHTML(url, html) {
   const images = elemObjs("img", (img) => {
     // @ts-ignore
     const { src, alt, width, height, className, id } = img;
-    if (width === 0 || height === 0) return [];
     /** @type {Image} */
     const result = {
       src: resolveUrl(url, src),

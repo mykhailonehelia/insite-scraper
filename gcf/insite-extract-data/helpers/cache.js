@@ -51,9 +51,7 @@ class GcsCache {
     this.cache[encodedKey] = value;
     console.log(`SET ${encodedKey}`);
 
-    await this.bucket.file(encodedKey).save(value, {
-      contentType: "text/plain",
-    });
+    await this.bucket.file(encodedKey).save(value);
     release();
   }
 

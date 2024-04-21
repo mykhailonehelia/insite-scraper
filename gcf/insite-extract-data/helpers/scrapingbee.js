@@ -20,7 +20,7 @@ async function getRawScrapingBeeResponse(params) {
         params: {
           screenshot: true,
           screenshot_full_page: true,
-          wait_browser: "load",
+          wait: 35 * 1000,
           block_resources: false,
           json_response: true,
         },
