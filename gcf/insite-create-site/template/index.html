@@ -35,12 +35,12 @@
 				<div class=" col-lg-8 col-md-8 col-sm-12">
 					<div class="top-address">
 						<p>	
-							<span><i class="icofont-ui-clock"></i>Opening Hour: 9:30AM - 5:30PM</span>
+							<span><i class="icofont-ui-clock"></i>FIXME HOURS</span>
 							{{#if companyInfo.phone}}
-							<a href="#"><i class="fas fa-phone-alt"></i>{{companyInfo.phone}}</a>
+							<a href="{{companyInfo.phoneLink}}"><i class="fas fa-phone-alt"></i>{{companyInfo.phone}}</a>
 							{{/if}}
 							{{#if companyInfo.email}}
-							<a href="#"><i class="fas fa-envelope"></i>{{companyInfo.email}}</a>
+							<a href="{{companyInfo.emailLink}}"><i class="fas fa-envelope"></i>{{companyInfo.email}}</a>
 							{{/if}}
 						</p>
 					</div>
@@ -49,7 +49,7 @@
 				<div class="col-lg-4 col-md-4 col-sm-12 ">
 					<div class="top-right-menu">
 						<ul class="social-icons text-right text_m_center">
-							<div>FIXME FIXME SOCIAL LINKS</div>
+							<li>FIXME SOCIAL LINKS</li>
 							<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
 							<li><a href="#"><i class="fab fa-twitter"></i></a></li>
 							<li><a href="#"><i class="fab fa-instagram"></i></a></li>
@@ -140,7 +140,12 @@
 								<li><a href="contact.html">Contact</a></li>
 							</ul>
 							<div class="donate-btn-header">
-								<a class="dtbtn" href="#">BOOK NOW</a>	
+								{{#if companyInfo.prefersEmail}}
+								<a class="dtbtn" href="{{companyInfo.emailLink}}"><i class="fas fa-envelope"></i> {{companyInfo.email}}</a>	
+								{{/if}}
+								{{#if companyInfo.prefersPhone}}
+								<a class="dtbtn" href="{{companyInfo.phoneLink}}"><i class="fas fa-phone-alt"></i> {{companyInfo.phone}}</a>	
+								{{/if}}
 							</div>	
 						</nav>				
 					</div>
@@ -253,7 +258,7 @@
 						</div> 
 					</div>
 					<div class="banner_text">
-						<p>FIXME Second Tagline</p>
+						<p>FIXME SECOND TAGLINE</p>
 					</div>
 					<div class="witr_button_area">
 						<div class="witr_btn_style mr">
@@ -284,7 +289,7 @@
 				<div class="witr_section_title">
 					<div class="witr_section_title_inner text-center">
 						<div class="witr_icon_title">
-							<i  class="fas fa-table-tennis"></i>						
+							<i class="fas fa-table-tennis"></i>						
 						</div>
 						<h3>FIXME Service List Header</h3>		
 						<p>FIXME Service List Description </p>		
@@ -332,7 +337,7 @@
 							</div>
 							<div class="play-overlay ">
 								<a class="video-popup video-vemo-icon venobox vbox-item" data-vbtype="youtube" data-autoplay="true" href="https://www.youtube.com/watch?v=XHOmBV4js_E">
-								<i  class="fas fa-play"></i>					
+								<i class="fas fa-play"></i>					
 								</a>
 							</div>
 						</div>	
@@ -1241,7 +1246,7 @@
 			<div class="row">
 				<div class="col-lg-6 col-md-6  col-sm-12">
 					<div class="copy-right-text">
-						<p>Copyright &copy; cleanit all rights reserved.</p>
+						<p>Copyright &copy; {{companyInfo.name}}. All Rights Reserved.</p>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6  col-sm-12">				

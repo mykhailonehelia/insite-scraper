@@ -103,12 +103,31 @@ function tidySchema(inputObject) {
     };
   });
 
+  const preferredMethodOfContact = companyInfo["Preferred Method of Contact"];
+  if (
+    preferredMethodOfContact !== "email" &&
+    preferredMethodOfContact !== "phone"
+  ) {
+    throw new Error(
+      `Unknown preferredMethodOfContact: '${preferredMethodOfContact}'`
+    );
+  }
+
+  const email = companyInfo.Email;
+  const emailLink = `mailto:${email}`;
+  const phone = companyInfo.Phone;
+  const phoneLink = `tel:${phone}`;
+
   return {
     companyInfo: {
       name: companyInfo.Name,
-      phone: companyInfo.Phone,
-      email: companyInfo.Email,
-      preferredMethodOfContact: companyInfo["Preferred Method of Contact"],
+      phone,
+      phoneLink,
+      email,
+      emailLink,
+      preferredMethodOfContact,
+      prefersEmail: preferredMethodOfContact === "email",
+      prefersPhone: preferredMethodOfContact === "phone",
       streetAddress: companyInfo["Street Address"],
       city: companyInfo.City,
       state: companyInfo.State,
