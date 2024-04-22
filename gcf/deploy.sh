@@ -1,7 +1,8 @@
 #! /bin/bash
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
+echo "$SCRIPT_DIR"
 
-for dir in "$SCRIPT_DIR"/gcs/*; do
+for dir in "$SCRIPT_DIR"/*; do
   if [ -d "$dir" ]; then
     FOLDER_NAME=$(basename "$dir")
     echo "Deploying function: $FOLDER_NAME"
