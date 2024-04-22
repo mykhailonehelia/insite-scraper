@@ -3916,7 +3916,7 @@ background: var(--primary-color);
     3.banner css 
 ===========================*/
 .banner_area {
-    background-image: url(../images/slider.png);
+    background-image: url(--hero-background-image);
     background-position: center right;
     background-repeat: no-repeat;
     position: relative;

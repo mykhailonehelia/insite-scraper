@@ -24,6 +24,7 @@
 				--primary-color: {{colors.primary}};
 				--secondary-color: {{colors.accent}};
 				--dark-color: {{colors.dark}};
+				--hero-background-image: {{images.heroBackground}}
 			}
 		</style>
     </head>
@@ -35,7 +36,7 @@
 				<div class=" col-lg-8 col-md-8 col-sm-12">
 					<div class="top-address">
 						<p>	
-							<span><i class="icofont-ui-clock"></i>FIXME HOURS</span>
+							<span><i class="icofont-ui-clock"></i>{{strings.hoursOfOperation}}</span>
 							{{#if companyInfo.phone}}
 							<a href="{{companyInfo.phoneLink}}"><i class="fas fa-phone-alt"></i>{{companyInfo.phone}}</a>
 							{{/if}}
@@ -49,12 +50,9 @@
 				<div class="col-lg-4 col-md-4 col-sm-12 ">
 					<div class="top-right-menu">
 						<ul class="social-icons text-right text_m_center">
-							<li>FIXME SOCIAL LINKS</li>
 							<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
 							<li><a href="#"><i class="fab fa-twitter"></i></a></li>
 							<li><a href="#"><i class="fab fa-instagram"></i></a></li>
-							<li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
-							<li><a href="#"><i class="fab fa-dribbble"></i></a></li>								
 						</ul>
 					</div>
 				</div>	
@@ -258,7 +256,7 @@
 						</div> 
 					</div>
 					<div class="banner_text">
-						<p>FIXME SECOND TAGLINE</p>
+						<p>{{strings.heroTagline}}</p>
 					</div>
 					<div class="witr_button_area">
 						<div class="witr_btn_style mr">
@@ -289,10 +287,10 @@
 				<div class="witr_section_title">
 					<div class="witr_section_title_inner text-center">
 						<div class="witr_icon_title">
-							<i class="fas fa-table-tennis"></i>						
+							<i class="fas {{strings.serviceHeaderFAIcon}}"></i>						
 						</div>
-						<h3>FIXME Service List Header</h3>		
-						<p>FIXME Service List Description </p>		
+						<h3>{{strings.serviceHeaderTitle}}</h3>		
+						<p>{{strings.serviceHeaderDescription}}</p>		
 					</div>
 				</div>
 			</div>

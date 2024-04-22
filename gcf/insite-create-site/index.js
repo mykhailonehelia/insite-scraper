@@ -94,6 +94,7 @@ function tidySchema(inputObject) {
   const companyInfo = root["Company Info"].data;
   const colors = root.Colors.data;
   const images = root.Images.data;
+  const strings = root.Strings.data;
   const rawServices = root.Services.data;
   const mappedServices = rawServices.map((service) => {
     return {
@@ -140,7 +141,17 @@ function tidySchema(inputObject) {
     },
     images: {
       logo: images["Logo Image URL"],
+      heroBackground: images["Hero Background URL"],
     },
     services: mappedServices,
+    strings: {
+      hoursOfOperation: strings["Hours of Operation"],
+      heroTagline: strings["Hero Tagline"],
+      serviceHeaderFAIcon:
+        strings["List of Services Header Section - Font Awesome Icon"],
+      serviceHeaderTitle: strings["List of Services Header Section - Title"],
+      serviceHeaderDescription:
+        strings["List of Services Header Section - Description"],
+    },
   };
 }
