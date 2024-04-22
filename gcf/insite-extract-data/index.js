@@ -41,5 +41,6 @@ functions.http("entry", async (req, res) => {
     results.data = result;
   }
 
-  res.status(200).send("<pre>" + JSON.stringify(results, null, 2) + "</pre>");
+  res.setHeader("Content-Type", "application/json");
+  res.status(200).send(JSON.stringify(results));
 });
