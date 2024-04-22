@@ -3,6 +3,7 @@ import { getImages } from "./extractors/images.js";
 import { getColors } from "./extractors/colors.js";
 import { extractServices } from "./extractors/services.js";
 import { getCopy } from "./extractors/copy.js";
+import { getStrings } from "./extractors/strings.js";
 
 /**
  * @param {import("./types.js").ExtractorParameters} params
@@ -16,6 +17,7 @@ async function extractData(params) {
     getColors(params),
     extractServices(params),
     getCopy(params),
+    getStrings(params),
   ];
 
   const tables = await Promise.all(extractors);

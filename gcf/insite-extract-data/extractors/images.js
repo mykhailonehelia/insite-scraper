@@ -15,6 +15,7 @@ async function getImages(params) {
     name: "Images",
     data: {
       "Logo Image URL": await imageUrlPromises[0],
+      "Hero Background URL": "INSERT_HERO_BACKGROUND_URL_HERE",
     },
   };
 }
