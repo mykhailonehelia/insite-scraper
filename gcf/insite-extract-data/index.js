@@ -41,6 +41,9 @@ functions.http("entry", async (req, res) => {
     results.data = result;
   }
 
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader("Content-Type", "application/json");
   res.status(200).send(JSON.stringify(results));
 });
