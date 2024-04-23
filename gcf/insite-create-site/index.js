@@ -9,16 +9,21 @@ const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 
 functions.http("entry", async (req, res) => {
   if (req.method !== "POST") {
+    res.set('Access-Control-Allow-Origin', '*');
     res.status(405).send("Method Not Allowed");
     return;
   }
 
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
   /** @type {object} */
   const data = req.body;
   if (data.data === undefined) {
     res.status(400).send("Invalid JSON");
     return;
   }
+  // ... rest of the function remains unchanged ...
   const cleanedData = tidySchema(data);
   console.log(JSON.stringify(cleanedData, null, 2));
   const storage = new Storage();
