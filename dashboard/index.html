@@ -60,22 +60,28 @@
             function addUrl() {
                 const list = document.getElementById('url-list');
                 const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td><input type="text" class="form-control" placeholder="Enter URL"></td>
-                    <td><textarea class="form-control" placeholder="Enter JSON"></textarea></td>
-                    <td>
-                        <div class="d-flex flex-column">
-                            <button class="btn btn-secondary mb-1" onclick="fetchUrl(this)">Fetch</button>
-                            <button class="btn btn-success mb-1" onclick="deployUrl(this)">Deploy</button>
-                            <button class="btn btn-danger mb-1" onclick="removeUrl(this)">Remove</button>
-                        </div>
-                        <div class="spinner-border text-primary" role="status" style="display:none;">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </td>
-                `;
-                list.appendChild(newRow);
-            }
+                newRow.innerHTML = '<td>' +
+                    '<div class="d-flex align-items-center">' +
+                        '<div class="spinner-border text-primary me-2" role="status" style="display:none;">' +
+                            '<span class="visually-hidden">Loading...</span>' +
+                        '</div>' +
+                        '<input type="text" class="form-control" placeholder="Enter URL">' +
+                    '</div>' +
+                '</td>
+                <td><textarea class="form-control" placeholder="Enter JSON"></textarea></td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-secondary mb-1" onclick="fetchUrl(this)">Fetch</button>
+                        <button class="btn btn-success mb-1" onclick="deployUrl(this)">Deploy</button>
+                        <button class="btn btn-danger mb-1" onclick="removeUrl(this)">Remove</button>
+                    </div>
+                    <div class="spinner-border text-primary" role="status" style="display:none;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </td>
+            `;
+            list.appendChild(newRow);
+        }
 
             function removeUrl(button) {
                 button.closest('tr').remove();
