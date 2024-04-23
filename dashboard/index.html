@@ -37,12 +37,14 @@
                     <thead>
                         <tr>
                             <th>URL</th>
+                            <th>JSON</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="url-list">
                         <tr>
                             <td><input type="text" class="form-control" placeholder="Enter URL"></td>
+                            <td><textarea class="form-control" placeholder="Enter JSON"></textarea></td>
                             <td>
                                 <button class="btn btn-secondary" onclick="fetchUrl(this)">Fetch</button>
                                 <button class="btn btn-success" onclick="deployUrl(this)">Deploy</button>
@@ -59,6 +61,7 @@
                 const newRow = document.createElement('tr');
                 newRow.innerHTML = `
                     <td><input type="text" class="form-control" placeholder="Enter URL"></td>
+                    <td><textarea class="form-control" placeholder="Enter JSON"></textarea></td>
                     <td>
                         <button class="btn btn-secondary" onclick="fetchUrl(this)">Fetch</button>
                         <button class="btn btn-success" onclick="deployUrl(this)">Deploy</button>
