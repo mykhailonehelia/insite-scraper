@@ -64,9 +64,11 @@
                     <td><input type="text" class="form-control" placeholder="Enter URL"></td>
                     <td><textarea class="form-control" placeholder="Enter JSON"></textarea></td>
                     <td>
-                        <button class="btn btn-secondary" onclick="fetchUrl(this)">Fetch</button>
-                        <button class="btn btn-success" onclick="deployUrl(this)">Deploy</button>
-                        <button class="btn btn-danger" onclick="removeUrl(this)">Remove</button>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-secondary mb-1" onclick="fetchUrl(this)">Fetch</button>
+                            <button class="btn btn-success mb-1" onclick="deployUrl(this)">Deploy</button>
+                            <button class="btn btn-danger mb-1" onclick="removeUrl(this)">Remove</button>
+                        </div>
                         <div class="spinner-border text-primary" role="status" style="display:none;">
                             <span class="visually-hidden">Loading...</span>
                         </div>
