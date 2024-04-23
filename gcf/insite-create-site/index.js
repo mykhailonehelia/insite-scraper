@@ -8,22 +8,17 @@ import { customAlphabet } from "nanoid";
 const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 
 functions.http("entry", async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'POST');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
-    res.status(204).send('');
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
     return;
-  }
-
-  if (req.method !== "POST") {
-    res.set('Access-Control-Allow-Origin', '*');
+  } else if (req.method !== "POST") {
     res.status(405).send("Method Not Allowed");
     return;
   }
 
-  res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Methods', 'POST');
-  res.set('Access-Control-Allow-Headers', 'Content-Type');
   /** @type {object} */
   const data = req.body;
   if (data.data === undefined) {
