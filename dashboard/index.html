@@ -103,7 +103,6 @@
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
-                        jsonTextarea.value = 'Error fetching data';
                         const statusCell = row.querySelector('.status-column');
                         statusCell.textContent = 'Error fetching data';
                         spinner.style.display = 'none';
@@ -127,17 +126,16 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    const statusCell = row.querySelector('.status-column');
                     if (data.url) {
-                        const statusCell = row.querySelector('.status-column');
                         statusCell.innerHTML = `<a href="${data.url}" target="_blank">View Site</a>`;
                     } else {
-                        jsonTextarea.value = 'Deployment failed';
+                        statusCell.innerHTML = `Deployment failed`;
                     }
                     spinner.style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Error deploying site:', error);
-                    jsonTextarea.value = 'Error deploying site';
                     const statusCell = row.querySelector('.status-column');
                     statusCell.textContent = 'Error deploying site';
                     spinner.style.display = 'none';
