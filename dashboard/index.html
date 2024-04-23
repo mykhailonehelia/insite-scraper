@@ -85,7 +85,22 @@
                 button.closest('tr').remove();
             }
             function fetchUrl(button) {
-                // Implement the fetch URL functionality here
+                const row = button.closest('tr');
+                const urlInput = row.querySelector('input[type="text"]');
+                const jsonTextarea = row.querySelector('textarea');
+                const url = urlInput.value;
+                const encodedUrl = encodeURIComponent(url);
+                const endpoint = `https://us-central1-default-gas-project.cloudfunctions.net/insite-extract-data?url=${encodedUrl}`;
+
+                fetch(endpoint)
+                    .then(response => response.json())
+                    .then(data => {
+                        jsonTextarea.value = JSON.stringify(data, null, 2);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                        jsonTextarea.value = 'Error fetching data';
+                    });
             }
 
             function deployUrl(button) {
