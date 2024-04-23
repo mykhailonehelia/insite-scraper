@@ -115,7 +115,39 @@
             }
 
             function deployUrl(button) {
-                // Implement the deploy URL functionality here
+                const row = button.closest('tr');
+                const jsonTextarea = row.querySelector('textarea');
+                const spinner = row.querySelector('.spinner-border');
+                const jsonData = jsonTextarea.value;
+                const endpoint = 'https://us-central1-default-gas-project.cloudfunctions.net/insite-create-site';
+
+                spinner.style.display = 'inline-block';
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: jsonData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.url) {
+                        const link = document.createElement('a');
+                        link.href = data.url;
+                        link.textContent = 'View Site';
+                        link.target = '_blank';
+                        jsonTextarea.value = JSON.stringify(data, null, 2);
+                        row.cells[2].appendChild(link);
+                    } else {
+                        jsonTextarea.value = 'Deployment failed';
+                    }
+                    spinner.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error deploying site:', error);
+                    jsonTextarea.value = 'Error deploying site';
+                    spinner.style.display = 'none';
+                });
             }
 
             </script>
