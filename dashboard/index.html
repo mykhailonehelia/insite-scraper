@@ -128,12 +128,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.url) {
-                        const link = document.createElement('a');
-                        link.href = data.url;
-                        link.textContent = 'View Site';
-                        link.target = '_blank';
-                        jsonTextarea.value = JSON.stringify(data, null, 2);
-                        row.cells[2].appendChild(link);
+                        const statusCell = row.querySelector('.status-column');
+                        statusCell.innerHTML = `<a href="${data.url}" target="_blank">View Site</a>`;
                     } else {
                         jsonTextarea.value = 'Deployment failed';
                     }
