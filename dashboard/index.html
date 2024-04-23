@@ -23,10 +23,10 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Features</a>
+                            <a class="nav-link" href="#features">Features</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
+                            <a class="nav-link" href="#pricing">Pricing</a>
                         </li>
                     </ul>
                 </div>
@@ -36,8 +36,51 @@
     </header>
     <main role="main" class="container mt-4">
         <div class="starter-template">
-            <h1>Bootstrap starter template</h1>
-            <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+            <h1>Dashboard</h1>
+            <div id="features" class="mb-3">
+                <h2>Features</h2>
+                <!-- Features content will go here -->
+            </div>
+            <div id="pricing" class="mb-3">
+                <h2>Pricing</h2>
+                <!-- Pricing content will go here -->
+            </div>
+            <div id="url-table" class="mb-3">
+                <h2>URL List</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="url-list">
+                        <tr>
+                            <td><input type="text" class="form-control" placeholder="Enter URL"></td>
+                            <td>
+                                <button class="btn btn-primary" onclick="addUrl()">Add</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <script>
+            function addUrl() {
+                const list = document.getElementById('url-list');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td><input type="text" class="form-control" placeholder="Enter URL"></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="removeUrl(this)">Remove</button>
+                    </td>
+                `;
+                list.appendChild(newRow);
+            }
+
+            function removeUrl(button) {
+                button.closest('tr').remove();
+            }
+            </script>
         </div>
     </main>
     <!-- Bootstrap Bundle with Popper -->
