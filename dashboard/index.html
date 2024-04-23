@@ -46,6 +46,7 @@
                             <td>
                                 <button class="btn btn-secondary" onclick="fetchUrl(this)">Fetch</button>
                                 <button class="btn btn-success" onclick="deployUrl(this)">Deploy</button>
+                                <button class="btn btn-danger" onclick="removeUrl(this)">Remove</button>
                             </td>
                         </tr>
                     </tbody>
@@ -59,6 +60,8 @@
                 newRow.innerHTML = `
                     <td><input type="text" class="form-control" placeholder="Enter URL"></td>
                     <td>
+                        <button class="btn btn-secondary" onclick="fetchUrl(this)">Fetch</button>
+                        <button class="btn btn-success" onclick="deployUrl(this)">Deploy</button>
                         <button class="btn btn-danger" onclick="removeUrl(this)">Remove</button>
                     </td>
                 `;
