@@ -82,6 +82,7 @@
                 const row = button.closest('tr');
                 const urlInput = row.querySelector('input[type="text"]');
                 const jsonTextarea = row.querySelector('textarea');
+                const spinner = row.querySelector('.spinner-border');
                 const url = urlInput.value;
                 const encodedUrl = encodeURIComponent(url);
                 const endpoint = `https://us-central1-default-gas-project.cloudfunctions.net/insite-extract-data?url=${encodedUrl}`;
