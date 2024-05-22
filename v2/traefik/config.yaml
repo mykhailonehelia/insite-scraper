@@ -1,0 +1,13 @@
+tls:
+  certificates:
+    - certFile: /certs/_wildcard.insite.com.pem
+      keyFile: /certs/_wildcard.insite.com-key.pem
+
+http:
+  routers:
+    dashboard:
+      rule: Host(`traefik.insite.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      service: api@internal
+
+log:
+  level: DEBUG

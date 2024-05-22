@@ -1,0 +1,69 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: "traefik"
+    restart: always
+    command:
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.directory=/config"
+#     - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
+#     - "--certificatesresolvers.mytlschallenge.acme.email=${SSL_EMAIL}"
+#     - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /home/kian/ssl/insite:/certs:ro
+      - ./traefik:/config:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.n8n.rule=Host(`${SUBDOMAIN}.${DOMAIN_NAME}`)
+      - traefik.http.routers.n8n.tls=true
+      - traefik.http.routers.n8n.entrypoints=web,websecure
+      - traefik.http.services.n8n.loadbalancer.server.port=5678
+    environment:
+      - N8N_HOST=${SUBDOMAIN}.${DOMAIN_NAME}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+    volumes:
+      - insite_n8n:/home/node/.n8n
+
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.minio.rule=Host(`minio.${DOMAIN_NAME}`)
+      - traefik.http.routers.minio.tls=true
+      - traefik.http.routers.minio.entrypoints=web,websecure
+      - traefik.http.services.minio.loadbalancer.server.port=9001
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - insite_minio:/data
+
+  inscriptis:
+    image: ghcr.io/weblyzard/inscriptis:latest
+
+volumes:
+  insite_n8n:
+    external: true
+  insite_minio:
+    external: true
