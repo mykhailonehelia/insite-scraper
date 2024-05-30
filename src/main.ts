@@ -6,8 +6,6 @@ import os from "node:os";
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 
-import { z } from "zod";
-
 import Tiktoken from "tiktoken";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
@@ -22,7 +20,6 @@ import { load } from "cheerio";
 import pRetry from "p-retry";
 import pLimit from "p-limit";
 
-import { Client as MinioClient } from "minio";
 
 
 const fetchExternalImageLimit = pLimit(1);
@@ -42,6 +39,7 @@ import {
   getObjectFromMinio,
   putObjectToMinio,
 } from "./helpers";
+import { servicesInstance } from "./services";
 
 
 async function run(services: Services, url: string, companyName: string) {
@@ -365,24 +363,7 @@ async function htmlToText(html: string) {
   return response.text();
 }
 
-function getServices() {
-  const minioAccessKey = getEnv("MINIO_ACCESS_KEY");
-  const minioSecretKey = getEnv("MINIO_SECRET_KEY");
 
-  const minio = new MinioClient({
-    endPoint: "localhost",
-    port: 9000,
-    useSSL: false,
-    accessKey: minioAccessKey,
-    secretKey: minioSecretKey,
-  });
-
-  const services: Services = {
-    minio,
-  };
-
-  return services;
-}
 
 const scrapingBeeLimitFn = pLimit(5);
 
@@ -529,10 +510,9 @@ app.use(bodyParser.json());
 const postResponseLimit = pLimit(1);
 
 app.post("/process", async (req: Request, res: Response) => {
+  const services = servicesInstance;
   const parsedRequest = RequestSchema.parse(req.body);
   const { sites, callback } = parsedRequest;
-
-  const services = getServices();
 
   res.status(200).json({ message: "processing started" });
 
@@ -561,6 +541,8 @@ app.post("/process", async (req: Request, res: Response) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
+  // ensure that services are loaded before server start
+  const services = servicesInstance;
   console.log(`Server is running on port ${port}`);
 });
 
