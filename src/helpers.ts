@@ -9,6 +9,11 @@ export async function getObjectFromMinio(
 ): Promise<string | null> {
   const truncatedObjectName = objectName.slice(0, 254);
   try {
+    const bucketExists = await minioClient.bucketExists(bucketName);
+    if (!bucketExists) {
+      await minioClient.makeBucket(bucketName, "");
+    }
+
     const stream = await minioClient.getObject(bucketName, truncatedObjectName);
     let data = "";
     for await (const chunk of stream) {
@@ -33,6 +38,11 @@ export async function putObjectToMinio(
 ): Promise<void> {
   const truncatedObjectName = objectName.slice(0, 254);
   try {
+    const bucketExists = await minioClient.bucketExists(bucketName);
+    if (!bucketExists) {
+      await minioClient.makeBucket(bucketName, "");
+    }
+
     const stream = new Readable({
       read() {
         if (objectValue === "") {
