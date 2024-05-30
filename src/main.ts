@@ -2,6 +2,7 @@ import Redis from "ioredis";
 import { Client as MinioClient } from "minio";
 import {
   CompanyInfoStructuredData,
+  RequestSchema,
   ReviewsStructuredData,
   Services,
   ServicesStructuredData,
@@ -28,16 +29,6 @@ import os from "node:os";
 import chroma from "chroma-js";
 import { load } from "cheerio";
 import pRetry from "p-retry";
-
-const SiteSchema = z.object({
-  url: z.string().url(),
-  companyName: z.string(),
-});
-
-const RequestSchema = z.object({
-  sites: z.array(SiteSchema),
-  callback: z.string().url(),
-});
 
 async function run(services: Services, url: string, companyName: string) {
   console.log(`main: starting run for ${companyName} (${url})`);

@@ -69,3 +69,14 @@ export const ServicesStructuredData = z.object({
     })
     .array(),
 });
+
+
+const SiteSchema = z.object({
+  url: z.string().url(),
+  companyName: z.string(),
+});
+
+export const RequestSchema = z.object({
+  sites: z.array(SiteSchema),
+  callback: z.string().url(),
+});
