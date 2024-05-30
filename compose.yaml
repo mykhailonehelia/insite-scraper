@@ -1,4 +1,15 @@
 services:
+  insite:
+    build: .
+    environment:
+      - MINIO_HOST=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - INSCRIPTIS_HOST=inscriptis
+      - SCRAPINGBEE_API_KEY=${SCRAPINGBEE_API_KEY}
+    ports:
+      - "3000:3000"
   minio:
     image: quay.io/minio/minio
     command: server /data --console-address ":9001"
