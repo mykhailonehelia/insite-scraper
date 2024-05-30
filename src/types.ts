@@ -26,6 +26,9 @@ export const fetchHtmlResponse = z.object({
 
 export type Services = {
   minio: MinioClient;
+  inscriptis: {
+    endpoint: string
+  }
 };
 
 export const Progress = z.object({

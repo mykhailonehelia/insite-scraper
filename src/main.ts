@@ -48,7 +48,7 @@ async function run(services: Services, url: string, companyName: string) {
 
   const pFetchAllHtml = fetchAllHtml(services, url);
   const pAllText = pFetchAllHtml.then(async (pages) => {
-    const txtPromises = Object.values(pages).map((e) => htmlToText(e.html));
+    const txtPromises = Object.values(pages).map((e) => htmlToText(services, e.html));
     const allTxt = await Promise.all(txtPromises);
     const cleanedLines = Array.from(
       new Set(
@@ -347,8 +347,8 @@ async function extractStructuredData(txt: string) {
   return retObj;
 }
 
-async function htmlToText(html: string) {
-  const response = await fetch("http://localhost:5000/get_text", {
+async function htmlToText(services: Services, html: string) {
+  const response = await fetch(services.inscriptis.endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "text/html",

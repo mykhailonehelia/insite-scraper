@@ -8,6 +8,7 @@ function getServices() {
   const minioPort = Number(getEnv("MINIO_PORT"))
   const minioAccessKey = getEnv("MINIO_ACCESS_KEY");
   const minioSecretKey = getEnv("MINIO_SECRET_KEY");
+  const inscriptisHost = getEnv("INSCRIPTIS_HOST");
 
   const minio = new MinioClient({
     endPoint: minioHost,
@@ -17,11 +18,17 @@ function getServices() {
     secretKey: minioSecretKey,
   });
 
+  const inscriptis = {
+    endpoint: `http://${inscriptisHost}:5000/get_text`,
+  };
+
   const services: Services = {
     minio,
+    inscriptis,
   };
 
   return services;
+
 }
 
 export const servicesInstance = getServices();
