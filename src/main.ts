@@ -524,14 +524,21 @@ app.post("/process", async (req: Request, res: Response) => {
         result = { url: site.url, error: JSON.stringify(err) };
       }
       await postResponseLimit(async () => {
-        await fetch(callback, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify([result]),
-        });
-        console.log(`DONE: ${site.url}`);
+        try {
+          const resp = await fetch(callback, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify([result]),
+          });
+          if (resp.status !== 200) {
+            throw new Error(`got status ${resp.status}`);
+          }
+          console.log(`DONE: ${site.url}`);
+        } catch (err) {
+          console.error(`unable to send results to ${callback}: ${err}`)
+        }
       });
     })
   );

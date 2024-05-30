@@ -12,6 +12,10 @@ function getServices() {
   const scrapingbeeApiKey = getEnv("SCRAPINGBEE_API_KEY");
   const lighthouseApiKey = getEnv("LIGHTHOUSE_API_KEY");
 
+  // this isn't used by any code I wrote, but langchain uses it
+  //     so we need to make sure we have it before starting the server
+  const unusedOpenAIApiKey = getEnv("OPENAI_API_KEY");
+
   const minio = new MinioClient({
     endPoint: minioHost,
     port: minioPort,
