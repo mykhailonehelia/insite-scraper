@@ -9,6 +9,7 @@ function getServices() {
   const minioAccessKey = getEnv("MINIO_ACCESS_KEY");
   const minioSecretKey = getEnv("MINIO_SECRET_KEY");
   const inscriptisHost = getEnv("INSCRIPTIS_HOST");
+  const scrapingbeeApiKey = getEnv("SCRAPINGBEE_API_KEY");
 
   const minio = new MinioClient({
     endPoint: minioHost,
@@ -22,13 +23,17 @@ function getServices() {
     endpoint: `http://${inscriptisHost}:5000/get_text`,
   };
 
+  const scrapingbee = {
+    apiKey: scrapingbeeApiKey,
+  };
+
   const services: Services = {
     minio,
     inscriptis,
+    scrapingbee,
   };
 
   return services;
-
 }
 
 export const servicesInstance = getServices();

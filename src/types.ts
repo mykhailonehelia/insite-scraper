@@ -27,8 +27,11 @@ export const fetchHtmlResponse = z.object({
 export type Services = {
   minio: MinioClient;
   inscriptis: {
-    endpoint: string
-  }
+    endpoint: string;
+  },
+  scrapingbee: {
+    apiKey: string;
+  },
 };
 
 export const Progress = z.object({

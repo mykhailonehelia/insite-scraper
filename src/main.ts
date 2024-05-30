@@ -404,8 +404,6 @@ async function processPage(services: Services, baseUrl: string, url: string) {
 }
 
 async function fetchHtml(services: Services, url: string) {
-  const apiKey = getEnv("SCRAPINGBEE_API_KEY");
-
   const { minio } = services;
   const bucketName = "insite-cache";
   const objectName = "html:" + encodeURIComponent(url);
@@ -419,6 +417,7 @@ async function fetchHtml(services: Services, url: string) {
   }
   console.log(`fetchHtml: fetching ${url}`);
   const encodedUrl = encodeURIComponent(url);
+  const apiKey = services.scrapingbee.apiKey;
   const apiUrl = `https://app.scrapingbee.com/api/v1/?api_key=${apiKey}&url=${encodedUrl}&block_resources=false&json_response=true&screenshot=true&wait=5000`;
 
   let response;
