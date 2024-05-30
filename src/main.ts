@@ -1,4 +1,3 @@
-import Redis from "ioredis";
 import { Client as MinioClient } from "minio";
 import {
   CompanyInfoStructuredData,
@@ -357,11 +356,8 @@ function getServices() {
     secretKey: minioSecretKey,
   });
 
-  const redis = new Redis();
-
   const services: Services = {
     minio,
-    redis,
   };
 
   return services;
@@ -456,7 +452,7 @@ async function fetchHtml(services: Services, url: string) {
 async function getLighthouse(services: Services, url: string) {
   const apiKey = getEnv("LIGHTHOUSE_API_KEY");
 
-  const { minio, redis } = services;
+  const { minio } = services;
   const bucketName = "insite-cache";
   const objectName = "lighthouse:" + encodeURIComponent(url);
 

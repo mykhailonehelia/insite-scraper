@@ -1,5 +1,4 @@
 import { Client as MinioClient } from "minio";
-import Redis from "ioredis";
 
 import { z } from "zod";
 
@@ -27,7 +26,6 @@ export const fetchHtmlResponse = z.object({
 
 export type Services = {
   minio: MinioClient;
-  redis: Redis;
 };
 
 export const Progress = z.object({
