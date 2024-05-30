@@ -9,4 +9,6 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci
-COPY --chown=node:node tsconfig.json ./src ./ 
+COPY --chown=node:node tsconfig.json ./src ./
+ENV NODE_ENV=production
+CMD ["npx", "tsx", "main.ts"]
