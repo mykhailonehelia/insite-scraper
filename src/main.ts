@@ -35,7 +35,6 @@ import {
 import {
   extractLinksFromHtml,
   filterLinksByDomain,
-  getEnv,
   getObjectFromMinio,
   putObjectToMinio,
 } from "./helpers";
@@ -451,7 +450,7 @@ async function fetchHtml(services: Services, url: string) {
 }
 
 async function getLighthouse(services: Services, url: string) {
-  const apiKey = getEnv("LIGHTHOUSE_API_KEY");
+  const apiKey = services.lighthouse.apiKey;
 
   const { minio } = services;
   const bucketName = "insite-cache";

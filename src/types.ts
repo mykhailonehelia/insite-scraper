@@ -32,6 +32,9 @@ export type Services = {
   scrapingbee: {
     apiKey: string;
   },
+  lighthouse: {
+    apiKey: string;
+  }
 };
 
 export const Progress = z.object({
