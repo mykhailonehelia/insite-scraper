@@ -21,6 +21,7 @@
     "minio": "^8.0.0",
     "p-limit": "^5.0.0",
     "p-retry": "^6.2.0",
+    "tiktoken": "^1.0.15",
     "zod": "^3.23.8"
   },
   "devDependencies": {

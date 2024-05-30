@@ -78,3 +78,12 @@ export const RequestSchema = z.object({
   sites: z.array(SiteSchema),
   callback: z.string().url(),
 });
+
+export const SocialMediaLinkSchema = z.object({
+  socialMediaLinks: z
+    .object({
+      platform: z.string(),
+      url: z.string().url(),
+    })
+    .array(),
+});

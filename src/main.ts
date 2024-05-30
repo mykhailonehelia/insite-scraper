@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 
 import { z } from "zod";
 
+import Tiktoken from "tiktoken";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
@@ -24,12 +25,15 @@ import pLimit from "p-limit";
 import { Client as MinioClient } from "minio";
 
 
+const fetchExternalImageLimit = pLimit(1);
+
 import {
   CompanyInfoStructuredData,
   RequestSchema,
   ReviewsStructuredData,
   Services,
   ServicesStructuredData,
+  SocialMediaLinkSchema,
 } from "./types";
 import {
   extractLinksFromHtml,
@@ -70,7 +74,15 @@ async function run(services: Services, url: string, companyName: string) {
   const pLogo = pImages.then(async (images) => getLogo(images, companyName));
 
   const lighthouse = await pLighthouse;
-  const structuredData = await pStructuredData;
+  let structuredData = {
+    CompanyInfo: {}, Services: { services: [] }, Reviews: { reviews: [] }
+  };
+  try {
+    // @ts-ignore
+    structuredData = await pStructuredData;
+  } catch (err) {
+    console.error(`error extracting structured data for ${url}: ${err}`);
+  }
   const colorScheme = await pColorScheme;
   const logoUrl = await pLogo;
   const socialMediaLinks = await pSocialMediaLinks;
@@ -83,9 +95,7 @@ async function run(services: Services, url: string, companyName: string) {
       colorScheme,
       socialMediaLinks: socialMediaLinks.socialMediaLinks,
       companyInfo: structuredData.CompanyInfo,
-      // @ts-ignore
       services: structuredData.Services.services,
-      // @ts-ignore
       reviews: structuredData.Reviews.reviews,
     },
   };
@@ -94,14 +104,6 @@ async function run(services: Services, url: string, companyName: string) {
 }
 
 async function extractSocialMediaLinks(services: Services, url: string) {
-  const SocialMediaLinkSchema = z.object({
-    socialMediaLinks: z
-      .object({
-        platform: z.string(),
-        url: z.string().url(),
-      })
-      .array(),
-  });
   const htmlKey = `html:${encodeURIComponent(url)}`;
   const html = await getObjectFromMinio(
     services.minio,
@@ -120,18 +122,17 @@ async function extractSocialMediaLinks(services: Services, url: string) {
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",
-      "Extract social media links from the following list of URLs. Return a structured output with 'platform' and 'url' for each link.",
+      "Extract social media (facebook, twitter, etc) links from the following list of URLs. Return a structured output with 'platform' and 'url' for each link. If no links, simply return an empty array.",
     ],
     ["user", "{links}"],
   ]);
 
   const chain = prompt.pipe(model.withStructuredOutput(SocialMediaLinkSchema));
 
-  const response = await chain.invoke({ links: allLinks.join("\n") });
+  const response = await pRetry(() => chain.invoke({ links: allLinks.join("\n") }), { retries: 5, onFailedAttempt: (err) => { console.error(`got error trying to extract social media links: ${err}`) } });
   return response;
 }
 
-const fetchExternalImageLimit = pLimit(1);
 
 async function getLogo(
   images: { src: string | null; alt: string }[],
@@ -294,8 +295,17 @@ function extractColorScheme(colors: [number, number, number][]) {
 }
 
 async function extractStructuredData(txt: string) {
+  const modelName = "gpt-3.5-turbo";
+  const encoding = Tiktoken.encoding_for_model(modelName);
+  const numTokens = encoding.encode(txt).length;
+
+  // gpt-3.5-turbo has 16k context
+  if (numTokens > 14000) {
+    throw new Error(`too many tokens: ${numTokens}`);
+  }
+
   const model = new ChatOpenAI({
-    model: "gpt-3.5-turbo",
+    model: modelName,
     maxRetries: 6,
   });
 
