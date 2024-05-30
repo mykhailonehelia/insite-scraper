@@ -1,4 +1,29 @@
+import path from "node:path";
+import fs from "node:fs/promises";
+import os from "node:os";
+
+
+import express, { Request, Response } from "express";
+import bodyParser from "body-parser";
+
+import { z } from "zod";
+
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+
+// @ts-ignore
+import ColorThief from "colorthief";
+import chroma from "chroma-js";
+
+import { load } from "cheerio";
+
+import pRetry from "p-retry";
+import pLimit from "p-limit";
+
 import { Client as MinioClient } from "minio";
+
+
 import {
   CompanyInfoStructuredData,
   RequestSchema,
@@ -13,21 +38,7 @@ import {
   getObjectFromMinio,
   putObjectToMinio,
 } from "./helpers";
-import { z } from "zod";
-import express, { Request, Response } from "express";
-import bodyParser from "body-parser";
-import pLimit from "p-limit";
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-// @ts-ignore
-import ColorThief from "colorthief";
-import { StringOutputParser } from "@langchain/core/output_parsers";
-import path from "node:path";
-import fs from "node:fs/promises";
-import os from "node:os";
-import chroma from "chroma-js";
-import { load } from "cheerio";
-import pRetry from "p-retry";
+
 
 async function run(services: Services, url: string, companyName: string) {
   console.log(`main: starting run for ${companyName} (${url})`);

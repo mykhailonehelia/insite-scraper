@@ -1,8 +1,6 @@
-import Redis from "ioredis";
 import { Client } from "minio";
 import { Readable } from "stream";
 import { load } from "cheerio";
-import { Message, Progress } from "./types";
 
 export async function getObjectFromMinio(
   minioClient: Client,
