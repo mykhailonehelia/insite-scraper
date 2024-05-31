@@ -11,17 +11,20 @@ Follow these steps to get the project up and running:
 ### Installation
 
 1. **Clone the repository:**
+
    ```sh
    git clone <repository-url>
    cd insite-scraper
    ```
 
 2. **Build the Docker containers:**
+
    ```sh
    docker compose build
    ```
 
 3. **Copy the example environment file and configure it:**
+
    ```sh
    cp .env.example .env
    ```
