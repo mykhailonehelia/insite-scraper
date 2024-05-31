@@ -34,3 +34,13 @@ Follow these steps to get the project up and running:
    ```
 
 The application will now be listening at port `3000`.
+
+### Example Usage
+
+You can use the following `curl` command to interact with the application:
+
+```sh
+curl -X POST -H "Content-Type: application/json" -d '{ "sites": [ { "url": "https://magicserviceco.com/", "companyName": "Magic Service Co" } ], "callback": "https://n8n.kianmusser.com/webhook-test/0c50a78d-67b1-4c70-b584-657d157a0999" }' http://localhost:3000/process
+```
+
+This command takes a list of site URLs and names, and a callback URL. The application will send POST requests to the callback URL as each site is processed.
