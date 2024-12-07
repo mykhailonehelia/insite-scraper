@@ -545,7 +545,7 @@ app.post("/process", async (req: Request, res: Response) => {
 });
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   // ensure that services are loaded before server start
   const services = servicesInstance;
   console.log(`Server is running on port ${port}`);
