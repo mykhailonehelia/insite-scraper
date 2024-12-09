@@ -507,6 +507,10 @@ app.use(bodyParser.json());
 
 const postResponseLimit = pLimit(1);
 
+app.get("/", async (req: Request, res: Response) => {
+  res.status(200).json({ message: "Server is up" });
+})
+
 app.post("/process", async (req: Request, res: Response) => {
   const services = servicesInstance;
   const parsedRequest = RequestSchema.parse(req.body);
