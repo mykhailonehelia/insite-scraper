@@ -511,7 +511,7 @@ app.get("/", async (req: Request, res: Response) => {
   res.status(200).json({ message: "Server is up" });
 })
 
-app.post("/process", async (req: Request, res: Response) => {
+app.post("/", async (req: Request, res: Response) => {
   const services = servicesInstance;
   const parsedRequest = RequestSchema.parse(req.body);
   const { sites, callback } = parsedRequest;
@@ -549,7 +549,7 @@ app.post("/process", async (req: Request, res: Response) => {
 });
 
 const port = process.env.PORT || 8080;
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, () => {
   // ensure that services are loaded before server start
   const services = servicesInstance;
   console.log(`Server is running on port ${port}`);
