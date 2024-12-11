@@ -487,6 +487,7 @@ async function getLighthouse(services: Services, url: string) {
   }
 
   const lighthouseData = await response.json();
+  console.log('lighthouseData', lighthouseData);
   const scores = {
     performance: lighthouseData.lighthouseResult.categories.performance.score,
     accessibility:
@@ -518,34 +519,38 @@ app.post("/", async (req: Request, res: Response) => {
 
   res.status(200).json({ message: "processing started" });
 
-  await Promise.all(
-    sites.map(async (site) => {
-      let result;
-      try {
-        result = await run(services, site.url, site.companyName);
-      } catch (err) {
-        console.error(err);
-        result = { url: site.url, error: JSON.stringify(err) };
-      }
-      await postResponseLimit(async () => {
+  try {
+    await Promise.all(
+      sites.map(async (site) => {
+        let result;
         try {
-          const resp = await fetch(callback, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify([result]),
-          });
-          if (resp.status !== 200) {
-            throw new Error(`got status ${resp.status}`);
-          }
-          console.log(`DONE: ${site.url}`);
+          result = await run(services, site.url, site.companyName);
         } catch (err) {
-          console.error(`unable to send results to ${callback}: ${err}`)
+          console.error(err);
+          result = { url: site.url, error: JSON.stringify(err) };
         }
-      });
-    })
-  );
+        await postResponseLimit(async () => {
+          try {
+            const resp = await fetch(callback, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify([result]),
+            });
+            if (resp.status !== 200) {
+              throw new Error(`got status ${resp.status}`);
+            }
+            console.log(`DONE: ${site.url}`);
+          } catch (err) {
+            console.error(`unable to send results to ${callback}: ${err}`)
+          }
+        });
+      })
+    );
+  } catch (err) {
+    console.error(err)
+  }
 });
 
 const port = process.env.PORT || 8080;
