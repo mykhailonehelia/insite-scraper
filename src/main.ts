@@ -513,13 +513,13 @@ app.get("/", async (req: Request, res: Response) => {
 })
 
 app.post("/", async (req: Request, res: Response) => {
-  const services = servicesInstance;
-  const parsedRequest = RequestSchema.parse(req.body);
-  const { sites, callback } = parsedRequest;
-
-  res.status(200).json({ message: "processing started" });
-
   try {
+    const services = servicesInstance;
+    const parsedRequest = RequestSchema.parse(req.body);
+    const { sites, callback } = parsedRequest;
+
+    res.status(200).json({ message: "processing started" });
+
     await Promise.all(
       sites.map(async (site) => {
         let result;
