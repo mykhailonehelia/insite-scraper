@@ -487,7 +487,7 @@ async function getLighthouse(services: Services, url: string) {
   }
 
   const lighthouseData = await response.json();
-  console.log('lighthouseData', lighthouseData);
+
   const scores = {
     performance: lighthouseData.lighthouseResult.categories.performance.score,
     accessibility:
